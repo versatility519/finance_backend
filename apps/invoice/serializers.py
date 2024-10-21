@@ -62,7 +62,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
     items = InvoiceItemSerializer()
     supplier = SupplierSerializer()
     docs = DocumentSerializer(read_only=True, required=False)
-    terms = TermsSerializer()  # Keep this as is for input
+    terms = TermsSerializer() 
     tax = TaxInfoSerializer()
  
     class Meta:
@@ -74,11 +74,12 @@ class InvoiceSerializer(serializers.ModelSerializer):
         items_data = validated_data.pop('items', [])
         terms_data = validated_data.pop('terms', None)
 
+        # invoice= Invoice.objects.create(**validated_data)
+        invoice = super().create(validated_data)
+
         if terms_data:
             terms_instance = Terms.objects.create(**terms_data)
             validated_data['terms'] = terms_instance
-
-        invoice = super().create(validated_data)
 
         for item_data in items_data:
             InvoiceItem.objects.create(invoice=invoice, **item_data)
