@@ -3,7 +3,8 @@ __pycache__/
 *.py[cod]
 
 # Ignore virtual environment directories
-venv/
+venv_linux/
+env/
 .env
 
 # Ignore log files

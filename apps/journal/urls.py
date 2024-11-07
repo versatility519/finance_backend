@@ -9,8 +9,8 @@ from .views import (
 urlpatterns = [
     # path('journalsAdd', JournalCreateView.as_view(), name='journal-create'),
 
-    path('journals', JournalListView.as_view(), name='journal-list'),
-    path('journals/<int:pk>', JournalDetailView.as_view(), name='journal-detail'),
+    path('journal', JournalListView.as_view(), name='journal-list'),
+    path('journal/<int:pk>', JournalDetailView.as_view(), name='journal-detail'),
 
     path('transaction', TransactionListView.as_view(), name='transaction-list'),
     path('transaction/<int:pk>', TransactionDetailView.as_view(), name='transaction-detail'),

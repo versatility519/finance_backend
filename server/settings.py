@@ -40,11 +40,36 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    
+
+    'apps.users',
+    'apps.client',
+    'apps.organization',
+    'apps.supplier',
     'apps.account',
+
+    'apps.project',
+    
     'apps.invoice',
+    'apps.bill',
+    'apps.sales',
+
     'apps.journal',
+    'apps.inventory',
+    'apps.requisition',
+    # 'apps.purchase',
+    # 'apps.sale',
+    # 'apps.report',
 ]
+
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.TokenAuthentication',
+#     ],
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.IsAuthenticated',
+#     ],
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -136,3 +161,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# AUTH_USER_MODEL = 'customeUser.User'

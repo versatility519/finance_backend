@@ -15,7 +15,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 't_date', 'amount', 'description', 'type', 'account', 'journalID']
 
     def create(self, validated_data):
-        account_data = validated_data.pop('account')  # Extract account data
+        account_data = validated_data.pop('account') 
         account, created = LegerAcc.objects.get_or_create(**account_data) 
         transaction = Transaction.objects.create(account=account, **validated_data) 
         return transaction

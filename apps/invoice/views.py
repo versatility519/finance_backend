@@ -1,32 +1,29 @@
 from rest_framework import generics
-from .models import Supplier, Contact, Invoice, InvoiceItem, Document, TaxInfo, Terms
+from apps.organization.models import Tax
+from .models import Invoice, InvoiceItem, InvoiceDoc, Terms
 from .serializers import (
-    SupplierSerializer,
-    ContactSerializer,
     InvoiceSerializer,
     InvoiceItemSerializer,
-    DocumentSerializer,
-    TaxInfoSerializer,
+    InvoiceDocSerializer,
     TermsSerializer,
 )
+# InvoiceDoc Views
+class InvoiceDocListCreateView(generics.ListCreateAPIView):
+    queryset = InvoiceDoc.objects.all()
+    serializer_class = InvoiceDocSerializer
 
-# Supplier Views
-class SupplierListCreateView(generics.ListCreateAPIView):
-    queryset = Supplier.objects.all()
-    serializer_class = SupplierSerializer
+class InvoiceDocDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = InvoiceDoc.objects.all()
+    serializer_class = InvoiceDocSerializer
 
-class SupplierDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Supplier.objects.all()
-    serializer_class = SupplierSerializer
+# Terms Views
+class TermsListCreateView(generics.ListCreateAPIView):
+    queryset = Terms.objects.all()
+    serializer_class = TermsSerializer
 
-# Contact Views
-class ContactListCreateView(generics.ListCreateAPIView):
-    queryset = Contact.objects.all()
-    serializer_class = ContactSerializer
-
-class ContactDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Contact.objects.all()
-    serializer_class = ContactSerializer
+class TermsDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Terms.objects.all()
+    serializer_class = TermsSerializer
 
 # Invoice Views
 class InvoiceListCreateView(generics.ListCreateAPIView):
@@ -46,29 +43,3 @@ class InvoiceItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = InvoiceItem.objects.all()
     serializer_class = InvoiceItemSerializer
 
-# Document Views
-class DocumentListCreateView(generics.ListCreateAPIView):
-    queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
-
-class DocumentDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
-
-# Tax Item Views
-class TaxInfoListCreateView(generics.ListCreateAPIView):
-    queryset = TaxInfo.objects.all()
-    serializer_class = TaxInfoSerializer
-
-class TaxInfoDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = TaxInfo.objects.all()
-    serializer_class = TaxInfoSerializer
-
-# Terms Views
-class TermsListCreateView(generics.ListCreateAPIView):
-    queryset = Terms.objects.all()
-    serializer_class = TermsSerializer
-
-class TermsDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Terms.objects.all()
-    serializer_class = TermsSerializer

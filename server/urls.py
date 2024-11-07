@@ -19,7 +19,22 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('api/', include('apps.users.urls')),
+
+    # path('api/', include('apps.client.urls')),
+    path('api/', include('apps.organization.urls')),
+    path('api/', include('apps.supplier.urls')),
     path('api/', include('apps.account.urls')),
+
+    path('api/', include('apps.project.urls')),
+
     path('api/', include('apps.invoice.urls')), 
+    path('api/', include('apps.bill.urls')), 
+    # path('api/', include('apps.sales.urls')), 
+
     path('api/', include('apps.journal.urls')),
+    path('api/', include('apps.inventory.urls')),
+    path('api/', include('apps.requisition.urls')),
 ]
+     
