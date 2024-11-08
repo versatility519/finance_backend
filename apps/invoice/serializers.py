@@ -6,8 +6,8 @@ from .models import Invoice, InvoiceItem, InvoiceDoc, Terms
 from apps.inventory.models import IssueUnit
 from apps.inventory.serializers import IssueUnitSerializer
 
-from apps.account.models import LegerAcc
-from apps.account.serializers import LegerAccSerializer
+from apps.account.models import LegerAccount
+from apps.account.serializers import LegerAccountSerializer
 
 from apps.organization.models import Tax
 from apps.organization.serializers import TaxSerializer
@@ -26,7 +26,7 @@ class TermsSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 class InvoiceItemSerializer(serializers.ModelSerializer):
-    account = serializers.PrimaryKeyRelatedField(queryset=LegerAcc.objects.all()) 
+    account = serializers.PrimaryKeyRelatedField(queryset=LegerAccount.objects.all()) 
     tax_group = serializers.PrimaryKeyRelatedField(queryset=Tax.objects.all()) 
     measure_unit = serializers.PrimaryKeyRelatedField(queryset=IssueUnit.objects.all())
     
@@ -48,7 +48,7 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['measure_unit'] = IssueUnitSerializer(instance.measure_unit).data
-        representation['account'] = LegerAccSerializer(instance.account).data
+        representation['account'] = LegerAccountSerializer(instance.account).data
         representation['tax_group'] = TaxSerializer(instance.tax_group).data
         return representation
 

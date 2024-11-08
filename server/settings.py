@@ -55,6 +55,7 @@ INSTALLED_APPS = [
 
     'apps.journal',
     'apps.inventory',
+    
     'apps.requisition',
     # 'apps.purchase',
     # 'apps.sale',

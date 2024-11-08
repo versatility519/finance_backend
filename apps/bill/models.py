@@ -1,7 +1,7 @@
 from django.db import models
 from apps.supplier.models import Supplier
 from apps.inventory.models import OrderUnit
-from apps.account.models import LegerAcc    
+from apps.account.models import LegerAccount    
 from apps.organization.models import Tax
 
 class BillDoc(models.Model):
@@ -22,7 +22,7 @@ class BillItem(models.Model):
     description = models.TextField(max_length=200)
     unit = models.CharField(max_length=10)
     measure_unit = models.ForeignKey(OrderUnit, on_delete=models.CASCADE)
-    account = models.ForeignKey(LegerAcc, on_delete=models.CASCADE)
+    account = models.ForeignKey(LegerAccount, on_delete=models.CASCADE)
     
     quantity = models.DecimalField(max_digits=10, decimal_places=3)
     price = models.DecimalField(max_digits=10, decimal_places=3)

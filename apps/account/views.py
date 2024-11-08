@@ -1,17 +1,25 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .models import LegerAcc, SubAccount
-from .serializers import LegerAccSerializer, SubAccountSerializer
+from .models import LegerAccount, SubSAccount, SubAccount
+from .serializers import LegerAccountSerializer, SubSAccountSerializer, SubAccountSerializer
 
 # Create your views here.
-class LegerAccListCreateView(generics.ListCreateAPIView):
-    queryset = LegerAcc.objects.all()
-    serializer_class = LegerAccSerializer
+class LegerAccountListCreateView(generics.ListCreateAPIView):
+    queryset = LegerAccount.objects.all()
+    serializer_class = LegerAccountSerializer
 
-class LegerAccDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = LegerAcc.objects.all()
-    serializer_class = LegerAccSerializer
+class LegerAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LegerAccount.objects.all()
+    serializer_class = LegerAccountSerializer
+
+class SubSAccountListCreateView(generics.ListCreateAPIView):
+    queryset = SubSAccount.objects.all()
+    serializer_class = SubSAccountSerializer
     
+class SubSAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SubSAccount.objects.all()
+    serializer_class = SubSAccountSerializer
+
 class SubAccountListCreateView(generics.ListCreateAPIView):
     queryset = SubAccount.objects.all()
     serializer_class = SubAccountSerializer

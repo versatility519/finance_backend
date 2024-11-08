@@ -93,6 +93,7 @@ class IssueSerializer(serializers.ModelSerializer):
 
 class ReservationItemSerializer(serializers.ModelSerializer):
     measureUnit = serializers.PrimaryKeyRelatedField(queryset=IssueUnit.objects.all())
+    
     class Meta:
         model = ReservationItem
         fields = ['id', 'item_name', 'item_description', 'item_code', 'item_manufacturer', 'item_manufacCode', 'item_quantity', 'measureUnit']
@@ -103,10 +104,17 @@ class ReservationItemSerializer(serializers.ModelSerializer):
         return representation
 
 class ReservationSerializer(serializers.ModelSerializer):
-    items = ReservationItemSerializer(many=True)
+    items = serializers.PrimaryKeyRelatedField(queryset=ReservationItem.objects.all())
     class Meta:
         model = Reservation
         fields = ['id', 'date', 'items', 'reason', 'reserved_date', 'reserved_by','storekeeper', 'status']
+        
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['storekeeper'] = UserSerializer(instance.storekeeper).data
+        representation['items'] = ReservationItemSerializer(instance.items).data
+
+        return representation
 
 class ReceptionItemSerializer(serializers.ModelSerializer):
     item_bin = serializers.PrimaryKeyRelatedField(queryset=Bin.objects.all()) 

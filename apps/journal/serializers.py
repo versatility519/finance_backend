@@ -1,29 +1,29 @@
 from rest_framework import serializers
 from .models import Journal, Transaction
-from apps.account.models import LegerAcc
+from apps.account.models import LegerAccount
 
-class LegerAccSerializer(serializers.ModelSerializer):
+class LegerAccountSerializer(serializers.ModelSerializer):
     class Meta:
-        model = LegerAcc
+        model = LegerAccount
         fields = '__all__'
 
 class TransactionSerializer(serializers.ModelSerializer):
-    # account = serializers.PrimaryKeyRelatedField(queryset=LegerAcc.objects.all()) 
-    account = LegerAccSerializer()
+    # account = serializers.PrimaryKeyRelatedField(queryset=LegerAccount.objects.all()) 
+    account = LegerAccountSerializer()
     class Meta:
         model = Transaction
         fields = ['id', 'name', 't_date', 'amount', 'description', 'type', 'account', 'journalID']
 
     def create(self, validated_data):
         account_data = validated_data.pop('account') 
-        account, created = LegerAcc.objects.get_or_create(**account_data) 
+        account, created = LegerAccount.objects.get_or_create(**account_data) 
         transaction = Transaction.objects.create(account=account, **validated_data) 
         return transaction
     
     def update(self, instance, validated_data):
         account_data = validated_data.pop('account', None) 
         if account_data:
-            account, created = LegerAcc.objects.get_or_create(**account_data)  
+            account, created = LegerAccount.objects.get_or_create(**account_data)  
             instance.account = account  
 
         instance.name = validated_data.get('name', instance.name)

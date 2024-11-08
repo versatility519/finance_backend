@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
+
 from apps.organization.models import Department
 from apps.users.models import CustomUser
 from apps.supplier.models import Supplier
@@ -43,7 +46,7 @@ class RequisitionItem(models.Model):
             self.tax_amount = 0
         self.total_amount = self.quantity * self.price
         super().save(*args, **kwargs)
-
+    
 class Requisition(models.Model):
     requisition_number = models.PositiveIntegerField()
     date = models.DateField(auto_now=True)
@@ -55,30 +58,20 @@ class Requisition(models.Model):
     approved_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='approved_requisitions')
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='created_requisitions')
     
-    status = models.CharField(max_length=20, choices=[
-        ('inProgress', 'In Progress'),
-        ('approved', 'Approved'),
-        ('created', 'Created'),
-        ('rejected', 'Rejected'),
-        ('completed', 'Completed'),
-        ('cancel', 'Cancel')
-    ])
+    total_tax_amount = models.DecimalField(max_digits=10, decimal_places=3, editable=False, null=True)
+    total_net_amount = models.DecimalField(max_digits=10, decimal_places=3, editable=False, null=True)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=3, editable=False, null=True)
     
-    total_tax_amount = models.DecimalField(max_digits=10, decimal_places=3, editable=False)
-    total_net_amount = models.DecimalField(max_digits=10, decimal_places=3, editable=False)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=3, editable=False)
+    class Status(models.TextChoices):
+        IN_PROGRESS = 'inProgress', 'In Progress'
+        APPROVED = 'approved', 'Approved'
+        CREATED = 'created', 'Created'
+        REJECTED = 'rejected', 'Rejected'
+        COMPLETED = 'completed', 'Completed'
+        CANCELLED = 'cancel', 'Cancel'
+
+    status = models.CharField(max_length=20, choices=Status.choices)
    
     def __str__(self):
         return f"Requisition #{self.requisition_number}"
     
-    def save(self, *args, **kwargs):
-        # Calculate total amounts based on related items
-        net_amounts = [item.total_amount for item in self.items.all()]
-        tax_amounts = [item.tax_amount for item in self.items.all()]
-
-        self.total_net_amount = sum(net_amounts)
-        self.total_tax_amount = sum(tax_amounts)
-        self.total_amount = self.total_net_amount + self.total_tax_amount
-
-        super().save(*args, **kwargs)
- 

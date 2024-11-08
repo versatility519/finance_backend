@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from apps.users.models import CustomUser
-from apps.account.models import LegerAcc
+from apps.account.models import LegerAccount
 
 from apps.project.models import Project
 
@@ -123,7 +123,6 @@ class Reservation(models.Model):
         on_delete=models.CASCADE
     )
     
-    recep_doc = models.ForeignKey('ReceptionDoc', on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
 
     def __str__(self):
@@ -236,7 +235,7 @@ class InventoryItem(models.Model):
         on_delete=models.CASCADE,
         related_name='inventory_items',
     )
-    account = models.ForeignKey(LegerAcc, on_delete=models.CASCADE)
+    account = models.ForeignKey(LegerAccount, on_delete=models.CASCADE)
     sub_category = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
 
     def __str__(self):
