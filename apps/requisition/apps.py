@@ -6,4 +6,4 @@ class RequisitionConfig(AppConfig):
     name = 'apps.requisition'
 
     def ready(self):
-        import apps.requisition.signals  # Ensure signals are registered
+        import apps.requisition.signals 

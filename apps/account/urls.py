@@ -5,9 +5,16 @@ from .views import (
     
     SubSAccountListCreateView,
     SubSAccountDetailView,
-
-    SubAccountListCreateView,
-    SubAccountDetailView,
+ 
+    SubOneAccountListCreateView,
+    SubOneAccountDetailView,
+    
+    SubTwoAccountListCreateView,
+    SubTwoAccountDetailView,
+    
+    SubThreeAccountListCreateView,
+    SubThreeAccountDetailView
+    
 )
 
 urlpatterns = [
@@ -17,6 +24,13 @@ urlpatterns = [
     path('subs-account', SubSAccountListCreateView.as_view(), name='subaccount-list-create'),
     path('subs-account/<int:pk>', SubSAccountDetailView.as_view(), name='subaccount-detail'),
     
-    path('subaccount', SubAccountListCreateView.as_view(), name='subaccount-list-create'),
-    path('subaccount/<int:pk>', SubAccountDetailView.as_view(), name='subaccount-detail'),
+    path('onelayer-account', SubOneAccountListCreateView.as_view(), name='subone-list-create'),
+    path('onelayer-account/<int:pk>', SubOneAccountDetailView.as_view(), name='subone-detail'),
+    
+    path('twolayer-account', SubTwoAccountListCreateView.as_view(), name='subtwo-list-create'),
+    path('twolayer-account/<int:pk>', SubTwoAccountDetailView.as_view(), name='subtwo-detail'),
+    
+    path('threelayer-account', SubThreeAccountListCreateView.as_view(), name='subthree-list-create'),
+    path('threelayer-account/<int:pk>', SubThreeAccountDetailView.as_view(), name='subthree-detail'),
+    
 ]

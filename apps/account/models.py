@@ -2,9 +2,23 @@ from django.db import models
 
 # Create your models here.
 
-class SubAccount(models.Model):
+class SubThreeAccount(models.Model):
     name = models.CharField(max_length=100)
-    parent = models.ForeignKey('SubSAccount', related_name='sub_account', on_delete=models.CASCADE)
+    parent = models.ForeignKey('SubTwoAccount', related_name='threelayer_account', on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return str(self.name) 
+    
+class SubTwoAccount(models.Model):
+    name = models.CharField(max_length=100)
+    parent = models.ForeignKey('SubOneAccount', related_name='twolayer_account', on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return str(self.name)
+
+class SubOneAccount(models.Model):
+    name = models.CharField(max_length=100)
+    parent = models.ForeignKey('SubSAccount', related_name='onelayer_account', on_delete=models.CASCADE)
     
     def __str__(self):
         return str(self.name)

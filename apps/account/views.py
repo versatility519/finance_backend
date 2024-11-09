@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .models import LegerAccount, SubSAccount, SubAccount
-from .serializers import LegerAccountSerializer, SubSAccountSerializer, SubAccountSerializer
+from .models import LegerAccount, SubSAccount, SubOneAccount, SubTwoAccount, SubThreeAccount
+from .serializers import LegerAccountSerializer, SubSAccountSerializer, SubOneAccountSerializer, SubTwoAccountSerializer, SubThreeAccountSerializer
 
 # Create your views here.
 class LegerAccountListCreateView(generics.ListCreateAPIView):
@@ -19,12 +19,29 @@ class SubSAccountListCreateView(generics.ListCreateAPIView):
 class SubSAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = SubSAccount.objects.all()
     serializer_class = SubSAccountSerializer
+ 
+class SubOneAccountListCreateView(generics.ListCreateAPIView):
+    queryset = SubOneAccount.objects.all()
+    serializer_class = SubOneAccountSerializer
 
-class SubAccountListCreateView(generics.ListCreateAPIView):
-    queryset = SubAccount.objects.all()
-    serializer_class = SubAccountSerializer
+class SubOneAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SubOneAccount.objects.all()
+    serializer_class = SubOneAccountSerializer
     
-class SubAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = SubAccount.objects.all()
-    serializer_class = SubAccountSerializer
+class SubTwoAccountListCreateView(generics.ListCreateAPIView):
+    queryset = SubTwoAccount.objects.all()
+    serializer_class = SubTwoAccountSerializer
+    
+class SubTwoAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SubTwoAccount.objects.all()
+    serializer_class = SubTwoAccountSerializer
+    
+class SubThreeAccountListCreateView(generics.ListCreateAPIView):
+    queryset = SubThreeAccount.objects.all()
+    serializer_class = SubThreeAccountSerializer
+    
+class SubThreeAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SubThreeAccount.objects.all()
+    serializer_class = SubThreeAccountSerializer
+    
     

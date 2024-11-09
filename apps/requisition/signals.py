@@ -9,7 +9,7 @@ def update_requisition_totals(sender, instance, **kwargs):
     requisition = instance.requisition
     
     # Recalculate total amounts
-    total_net = sum(item.total_amount for item in requisition.items.all())
+    total_net = sum(item.net_amount for item in requisition.items.all())
     total_tax = sum(item.tax_amount for item in requisition.items.all())
     
     # Update requisition totals

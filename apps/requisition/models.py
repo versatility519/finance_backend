@@ -1,6 +1,4 @@
 from django.db import models
-from django.db.models import Sum
-from django.db.models.functions import Coalesce
 
 from apps.organization.models import Department
 from apps.users.models import CustomUser
@@ -11,6 +9,7 @@ from apps.inventory.models import OrderUnit
 class RequisitionDoc(models.Model):
     name = models.CharField(max_length=100)
     docs = models.FileField(upload_to='documents/requisition')
+    requisition = models.ForeignKey('Requisition', related_name='requisition_docs', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -29,9 +28,9 @@ class RequisitionItem(models.Model):
     quantity = models.DecimalField(max_digits=10, decimal_places=3)
     price = models.DecimalField(max_digits=10, decimal_places=3)
     
-    total_amount = models.DecimalField(max_digits=10, decimal_places=3, editable=False)
+    net_amount = models.DecimalField(max_digits=10, decimal_places=3, editable=False)
 
-    tax_group = models.ForeignKey(Tax, on_delete=models.CASCADE, null=True, blank=True)
+    tax_group = models.ForeignKey(Tax, on_delete=models.CASCADE, null=True, blank=True, related_name='requisition_items')
     tax_amount = models.DecimalField(max_digits=10, decimal_places=3, editable=False)
     
     reception_quantity = models.DecimalField(max_digits=10, decimal_places=3)
@@ -44,7 +43,7 @@ class RequisitionItem(models.Model):
             self.tax_amount = self.quantity * self.price * self.tax_group.tax_rate
         else:
             self.tax_amount = 0
-        self.total_amount = self.quantity * self.price
+        self.net_amount = self.quantity * self.price
         super().save(*args, **kwargs)
     
 class Requisition(models.Model):

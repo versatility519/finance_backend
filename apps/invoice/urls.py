@@ -21,6 +21,6 @@ urlpatterns = [
     path('invoice-doc', InvoiceDocListCreateView.as_view(), name='invoicedoc-list-create'),
     path('invoice-doc/<int:pk>', InvoiceDocDetailView.as_view(), name='invoicedoc-detail'),
     
-    path('terms', TermsListCreateView.as_view(), name='terms-list-create'),
-    path('terms/<int:pk>', TermsDetailView.as_view(), name='terms-detail'),
+    path('invoice-terms', TermsListCreateView.as_view(), name='terms-list-create'),
+    path('invoice-terms/<int:pk>', TermsDetailView.as_view(), name='terms-detail'),
 ]

@@ -1,7 +1,6 @@
 from django.db import models
 from apps.users.models import CustomUser
 # Create your models here.
-
     
 class Client(models.Model):
     name = models.CharField(max_length=100)
@@ -21,6 +20,7 @@ class Contact(models.Model):
     address = models.CharField(max_length=100)
     role = models.CharField(max_length=100)
     clients = models.ForeignKey(Client, on_delete=models.CASCADE)
+    
     def __str__(self):
         return self.first_name
    
