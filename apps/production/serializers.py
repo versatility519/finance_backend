@@ -11,7 +11,7 @@ class PdocumentSerializer(serializers.ModelSerializer):
     production = serializers.PrimaryKeyRelatedField(queryset=Production.objects.all())
     class Meta:
         model = Pdocument
-        fields = ['id', 'doc_name', 'docs', 'production']
+        fields = ['id', 'doc_name', 'description', 'docfile', 'production']
 
 class ProductionItemSerializer(serializers.ModelSerializer):
     measure_unit = serializers.PrimaryKeyRelatedField(queryset=OrderUnit.objects.all())
@@ -27,19 +27,27 @@ class ProductionItemSerializer(serializers.ModelSerializer):
     
 class ProductionSerializer(serializers.ModelSerializer):
     items = ProductionItemSerializer(many=True, required=False)
+    docs = PdocumentSerializer(many=True, required=False)
+
     project = serializers.PrimaryKeyRelatedField(queryset=Project.objects.all())
     
     class Meta:
         model = Production
         fields = [
-            'id', 'name', 'project', 'date', 'p_start_date', 'p_end_date', 'p_status', 'approved', 'approved_by', 'items'
+            'id', 'name', 'project', 'date', 'p_start_date', 'p_end_date', 'p_status', 'approved', 'approved_by', 'items', 'docs'
         ]
     
+    def __init__(self, *args, **kwargs):
+        request = kwargs.get('context', {}).get('request', None)
+        if request and request.method == 'POST':
+            self.fields.pop('items', None)
+            self.fields.pop('documents', None)
+        super().__init__(*args, **kwargs)
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)        
         representation['project'] = ProjectSerializer(instance.project).data
         representation['items'] = ProductionItemSerializer(instance.items.all(), many=True).data
+        representation['documents'] = PdocumentSerializer(instance.documents.all(), many=True).data
         
         return representation
-
-        

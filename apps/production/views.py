@@ -10,10 +10,9 @@ class PdocumentListCreateView(generics.ListCreateAPIView):
     queryset = Pdocument.objects.all()
     serializer_class = PdocumentSerializer
 
-class ProductionListCreateView(generics.ListCreateAPIView):
-    queryset = Production.objects.all()
-    serializer_class = ProductionSerializer
-    
+class PdocumentDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Pdocument.objects.all()
+    serializer_class = PdocumentSerializer
 class ProductionItemListCreateView(generics.ListCreateAPIView):
     queryset = ProductionItem.objects.all()
     serializer_class = ProductionItemSerializer
@@ -22,10 +21,11 @@ class ProductionItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = ProductionItem.objects.all()
     serializer_class = ProductionItemSerializer
     
+class ProductionListCreateView(generics.ListCreateAPIView):
+    queryset = Production.objects.all()
+    serializer_class = ProductionSerializer
+    
+    
 class ProductionDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Production.objects.all()
     serializer_class = ProductionSerializer
-
-class PdocumentDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Pdocument.objects.all()
-    serializer_class = PdocumentSerializer

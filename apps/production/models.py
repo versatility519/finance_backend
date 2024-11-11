@@ -6,8 +6,9 @@ from apps.users.models import CustomUser
 # Create your models here.
 class Pdocument(models.Model):
     doc_name = models.CharField(max_length=100)
-    docs = models.FileField(upload_to='documents/productions')
-    Production = models.ForeignKey('Production', on_delete=models.CASCADE)
+    description = models.CharField(max_length=100)
+    docfile = models.FileField(upload_to='documents/productions')
+    production = models.ForeignKey('Production', related_name='documents', on_delete=models.CASCADE)
 
 class ProductionItem(models.Model):
     name = models.CharField(max_length=100)
