@@ -7,7 +7,9 @@ from .models import (
     SupplierItem,
     SupplierContact,
 )
-from .serializers import SupplierSerializer, SupplierItemSerializer, SupplierContactSerializer
+from .serializers import (
+    SupplierSerializer, SupplierItemSerializer, SupplierContactSerializer
+)
 
 class SupplierListCreateView(generics.ListCreateAPIView):
     queryset = Supplier.objects.all()

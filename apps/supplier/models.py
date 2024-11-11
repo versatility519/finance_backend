@@ -1,6 +1,7 @@
 from django.db import models
 from apps.users.models import CustomUser
 from apps.inventory.models import OrderUnit
+from apps.account.models import LedgerAccount
 # Create your models here.
 
 class Supplier(models.Model):
@@ -9,12 +10,13 @@ class Supplier(models.Model):
     billing_address = models.TextField(max_length=200)
     shipping_address = models.TextField(max_length=200)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    account = models.ForeignKey(LedgerAccount, on_delete=models.CASCADE, null=True, blank=True)
     
     def __str__(self):
         return str(self.supplier_name)
     
 class SupplierItem(models.Model):
-    item_name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     description = models.TextField(max_length=200)
     sku = models.CharField(max_length=100)
 
@@ -22,8 +24,7 @@ class SupplierItem(models.Model):
     manufacturer_code = models.CharField(max_length=100)
     
     quantity = models.DecimalField(max_digits=10, decimal_places=3)
-    measureUnit = models.ForeignKey(OrderUnit, on_delete=models.CASCADE)   
-    
+    measure_unit = models.ForeignKey(OrderUnit, on_delete=models.CASCADE)   
 
     growth = models.BooleanField(default=False)
     growth_fre = models.CharField(max_length=100, choices=[
@@ -34,9 +35,9 @@ class SupplierItem(models.Model):
         ('half_yearly', 'Half-Yearly'),
         ('yearly', 'Yearly'),
     ])
-    growth_ercnetage = models.FloatField()
+    growth_per = models.FloatField()
 
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    supplier = models.ForeignKey(Supplier, related_name='supplier_items', on_delete=models.CASCADE)
     
     def __str__(self):
         return str(self.name)
@@ -48,6 +49,7 @@ class SupplierContact(models.Model):
     email = models.EmailField()
     address = models.TextField(max_length=200)
     role = models.CharField(max_length=100)
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    supplier = models.ForeignKey(Supplier, related_name='supplier_contact', on_delete=models.CASCADE)
+    
     def __str__(self):
         return str(self.first_name)

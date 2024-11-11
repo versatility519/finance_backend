@@ -18,7 +18,7 @@ from apps.client.serializers import ClientSerializer, ContactSerializer
 class InvoiceDocSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceDoc
-        fields = ['id', 'name', 'docs', 'invoice']
+        fields = ['id', 'name', 'description', 'doc_file', 'invoice']
 
 class TermsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,18 +59,21 @@ class InvoiceSerializer(serializers.ModelSerializer):
     
     client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
     contact = serializers.PrimaryKeyRelatedField(queryset=Contact.objects.all())  
+    
+    invoiceDocs = InvoiceDocSerializer(many=True)
 
     class Meta:
         model = Invoice
         fields = [
             'id', 'invoice_num', 'created_date', 'client', 'required_date', 
-            'status', 'ship_to', 'bill_to', 'terms', 'total_tax_amount', 'total_net_amount', 'total_amount', 'contact', 'turn_to_pdf', 'items'
+            'status', 'ship_to', 'bill_to', 'terms', 'total_tax_amount', 'total_net_amount', 'total_amount', 'contact', 'turn_to_pdf', 'items', 'invoiceDocs'
         ]
 
     def __init__(self, *args, **kwargs):
         request = kwargs.get('context', {}).get('request', None)
         if request and request.method == 'POST':
             self.fields.pop('items', None)
+            self.fields.pop('invoiceDocs', None)
             self.fields.pop('total_tax_amount', None)
             self.fields.pop('total_net_amount', None)
             self.fields.pop('total_amount', None)
@@ -80,6 +83,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['items'] = InvoiceItemSerializer(instance.items.all(), many=True).data
         
+        representation['invoiceDocs'] = InvoiceDocSerializer(instance.invoiceDocs.all(), many=True).data
         representation['terms'] = TermsSerializer(instance.terms).data
         representation['contact'] = ContactSerializer(instance.contact).data
         representation['client'] = ClientSerializer(instance.client).data

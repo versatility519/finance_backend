@@ -8,7 +8,8 @@ from apps.organization.models import Tax
 
 class InvoiceDoc(models.Model):
     name = models.CharField(max_length=100)
-    docs = models.FileField(upload_to='documents/invoices') 
+    description = models.CharField(max_length=100)
+    doc_file = models.FileField(upload_to='documents/invoices') 
     invoice = models.ForeignKey('Invoice', related_name='invoiceDocs', on_delete=models.CASCADE)
 
     def __str__(self):
