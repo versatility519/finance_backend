@@ -11,7 +11,7 @@ from apps.users.models import CustomUser
 class PurchaseDocument(models.Model):
     doc_name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
-    docfile = models.FileField(upload_to='document/purchase_docs')
+    docfile = models.FileField(upload_to='documents/purchase_docs')
     purchase_order = models.ForeignKey('PurchaseOrder', related_name='documents', on_delete=models.CASCADE)
 
     def __str__(self):
