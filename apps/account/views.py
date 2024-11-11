@@ -1,47 +1,54 @@
-from django.shortcuts import render
-from rest_framework import generics
-from .models import LegerAccount, SubSAccount, SubOneAccount, SubTwoAccount, SubThreeAccount
-from .serializers import LegerAccountSerializer, SubSAccountSerializer, SubOneAccountSerializer, SubTwoAccountSerializer, SubThreeAccountSerializer
+from rest_framework import generics, status
+from rest_framework.response import Response
+from .models import LedgerAccount, SubAccount
+from .serializers import LedgerAccountSerializer
 
-# Create your views here.
-class LegerAccountListCreateView(generics.ListCreateAPIView):
-    queryset = LegerAccount.objects.all()
-    serializer_class = LegerAccountSerializer
+class LedgerAccountCreateListView(generics.ListCreateAPIView):
+    queryset = LedgerAccount.objects.all()
+    serializer_class = LedgerAccountSerializer
 
-class LegerAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = LegerAccount.objects.all()
-    serializer_class = LegerAccountSerializer
+    def post(self, request, *args, **kwargs):
+        account_data = request.data
+        
+        # Extract depth and num_sub_accounts
+        depth = int(account_data.get("depth", 1))  # default depth is 1
+        num_sub_accounts = int(account_data.get("num_sub_accounts", 1))  # default num_sub_accounts is 1
+        
+        # Prepare data for LedgerAccount creation
+        ledger_account_data = {
+            "ledger_name": account_data.get("ledger_name"),
+            "account_type": account_data.get("account_type"),
+            "status_change": account_data.get("status_change"),
+            "sub_accounts": self._generate_sub_accounts(num_sub_accounts, depth)
+        }
 
-class SubSAccountListCreateView(generics.ListCreateAPIView):
-    queryset = SubSAccount.objects.all()
-    serializer_class = SubSAccountSerializer
-    
-class SubSAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = SubSAccount.objects.all()
-    serializer_class = SubSAccountSerializer
+        # Serialize and save the LedgerAccount
+        serializer = LedgerAccountSerializer(data=ledger_account_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def _generate_sub_accounts(self, num_sub_accounts, depth, current_depth=1):
+        # If current_depth exceeds depth, return empty list
+        if current_depth > depth:
+            return []
+        
+        sub_accounts = []
+        for i in range(num_sub_accounts):
+            sub_account_data = {
+                "name": f"SubAccount Level {current_depth} - {i+1}",
+                "ledger_account": None,  # Will be assigned when saving the root LedgerAccount
+                "parent": None  # Parent will be assigned recursively
+            }
+            
+            # Recursively create children for the sub-accounts
+            sub_account_data["children"] = self._generate_sub_accounts(num_sub_accounts, depth, current_depth + 1)
+            sub_accounts.append(sub_account_data)
+        
+        return sub_accounts
+
+class LedgerAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LedgerAccount.objects.all()
+    serializer_class = LedgerAccountSerializer
  
-class SubOneAccountListCreateView(generics.ListCreateAPIView):
-    queryset = SubOneAccount.objects.all()
-    serializer_class = SubOneAccountSerializer
-
-class SubOneAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = SubOneAccount.objects.all()
-    serializer_class = SubOneAccountSerializer
-    
-class SubTwoAccountListCreateView(generics.ListCreateAPIView):
-    queryset = SubTwoAccount.objects.all()
-    serializer_class = SubTwoAccountSerializer
-    
-class SubTwoAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = SubTwoAccount.objects.all()
-    serializer_class = SubTwoAccountSerializer
-    
-class SubThreeAccountListCreateView(generics.ListCreateAPIView):
-    queryset = SubThreeAccount.objects.all()
-    serializer_class = SubThreeAccountSerializer
-    
-class SubThreeAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = SubThreeAccount.objects.all()
-    serializer_class = SubThreeAccountSerializer
-    
-    

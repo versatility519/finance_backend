@@ -37,5 +37,7 @@ urlpatterns = [
     path('api/', include('apps.journal.urls')),
     path('api/', include('apps.inventory.urls')),
     path('api/', include('apps.requisition.urls')),
+    
+    path('api/', include('apps.production.urls')),
 ]
      

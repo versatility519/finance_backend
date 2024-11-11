@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from apps.users.models import CustomUser
-from apps.account.models import LegerAccount
+from apps.account.models import LedgerAccount
 
 from apps.project.models import Project
 
@@ -235,7 +235,7 @@ class InventoryItem(models.Model):
         on_delete=models.CASCADE,
         related_name='inventory_items',
     )
-    account = models.ForeignKey(LegerAccount, on_delete=models.CASCADE)
+    account = models.ForeignKey(LedgerAccount, on_delete=models.CASCADE)
     sub_category = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
 
     def __str__(self):

@@ -1,5 +1,5 @@
 from django.db import models
-from apps.account.models import LegerAccount
+from apps.account.models import LedgerAccount
 
 # Create your models here.
 class Journal(models.Model):
@@ -25,8 +25,11 @@ class Transaction(models.Model):
     name = models.CharField(max_length=100)
     amount = models.FloatField()
     description = models.TextField(max_length=200)
-    type = models.CharField(max_length=7, choices=[('debit', 'debit'), ('credit', 'credit')])
-    account = models.ForeignKey(LegerAccount,related_name='Leger Account+', on_delete=models.CASCADE)
+    type = models.CharField(max_length=7, choices=[
+        ('debit', 'Debit'), 
+        ('credit', 'Credit')
+    ])
+    account = models.ForeignKey(LedgerAccount,related_name='Leger Account+', on_delete=models.CASCADE)
     journalID = models.ForeignKey('Journal', related_name='transactions', on_delete=models.CASCADE, null=True)
     
     def __str__(self):

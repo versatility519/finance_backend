@@ -11,7 +11,7 @@
 ## API Documentation
 
 
-### api/LegerAccount 
+### api/LedgerAccount 
 
 
 #### GET
@@ -42,7 +42,7 @@
         "type_status": "decrease" 
     }
 #### UPADTE
-*api/LegerAccount/2*
+*api/LedgerAccount/2*
 
     {
         "name": "Inventory",
@@ -51,7 +51,7 @@
     }
 
 #### DELETE
-    api/LegerAccount/2
+    api/LedgerAccount/2
 
 
 ### api/invoice 

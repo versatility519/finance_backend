@@ -1,3 +1,5 @@
 from django.contrib import admin
+from mptt.admin import MPTTModelAdmin
+from .models import SubAccount
 
-# Register your models here.
+admin.site.register(SubAccount, MPTTModelAdmin)

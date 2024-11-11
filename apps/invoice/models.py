@@ -3,7 +3,7 @@ from django.db import models
 
 from apps.inventory.models import IssueUnit
 from apps.client.models import Client, Contact
-from apps.account.models import LegerAccount
+from apps.account.models import LedgerAccount
 from apps.organization.models import Tax
 
 class InvoiceDoc(models.Model):
@@ -27,7 +27,7 @@ class InvoiceItem(models.Model):
     description = models.TextField(max_length=200)
     measure_unit = models.ForeignKey(IssueUnit, on_delete=models.CASCADE, related_name='invoice_items')
     
-    account = models.ForeignKey(LegerAccount, on_delete=models.CASCADE, related_name='invoice_items')
+    account = models.ForeignKey(LedgerAccount, on_delete=models.CASCADE, related_name='invoice_items')
     quantity = models.DecimalField(max_digits=10, decimal_places=3)
     price = models.DecimalField(max_digits=10, decimal_places=3)
    

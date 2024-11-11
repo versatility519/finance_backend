@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from .models import Journal, Transaction
-from apps.account.models import LegerAccount
+from apps.account.models import LedgerAccount
 
 class LegerAccountSerializer(serializers.ModelSerializer):
     class Meta:
-        model = LegerAccount
+        model = LedgerAccount
         fields = '__all__'
 
 class TransactionSerializer(serializers.ModelSerializer):
-    # account = serializers.PrimaryKeyRelatedField(queryset=LegerAccount.objects.all()) 
+    # account = serializers.PrimaryKeyRelatedField(queryset=LedgerAccount.objects.all()) 
     account = LegerAccountSerializer()
     class Meta:
         model = Transaction
@@ -16,14 +16,14 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         account_data = validated_data.pop('account') 
-        account, created = LegerAccount.objects.get_or_create(**account_data) 
+        account, created = LedgerAccount.objects.get_or_create(**account_data) 
         transaction = Transaction.objects.create(account=account, **validated_data) 
         return transaction
     
     def update(self, instance, validated_data):
         account_data = validated_data.pop('account', None) 
         if account_data:
-            account, created = LegerAccount.objects.get_or_create(**account_data)  
+            account, created = LedgerAccount.objects.get_or_create(**account_data)  
             instance.account = account  
 
         instance.name = validated_data.get('name', instance.name)

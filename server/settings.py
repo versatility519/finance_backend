@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     # 'apps.purchase',
     # 'apps.sale',
     # 'apps.report',
+    
+    'apps.production',
 ]
 
 

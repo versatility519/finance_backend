@@ -1,39 +1,45 @@
 from rest_framework import serializers
-from .models import LegerAccount, SubSAccount, SubOneAccount, SubTwoAccount, SubThreeAccount
+from .models import LedgerAccount, SubAccount
 
-# Serializer for SubThreeAccount
-class SubThreeAccountSerializer(serializers.ModelSerializer):
+class SubAccountSerializer(serializers.ModelSerializer):
+    # This will ensure `children` is serialized as a list of sub-account dictionaries
+    children = serializers.SerializerMethodField()
+
     class Meta:
-        model = SubThreeAccount
-        fields = ['id', 'name', 'parent'] 
+        model = SubAccount
+        fields = ['id', 'name', 'parent', 'children']
 
-# Serializer for SubTwoAccount
-class SubTwoAccountSerializer(serializers.ModelSerializer):
-    two_layer_account = SubThreeAccountSerializer(many=True, read_only=True)
+    def get_children(self, instance):
+        # Query the related `children` objects and use the same serializer recursively
+        children = instance.children.all()
+        return SubAccountSerializer(children, many=True).data
+
+    def create(self, validated_data):
+        # Handles recursive creation of sub-accounts
+        children_data = validated_data.pop('children', [])
+        sub_account = SubAccount.objects.create(**validated_data)
+        
+        # Create each child recursively
+        for child_data in children_data:
+            child_data['parent'] = sub_account
+            self.create(child_data)  # Recursive call for nested children
+        
+        return sub_account
     
-    class Meta:
-        model = SubTwoAccount
-        fields = ['id', 'name', 'parent', 'two_layer_account'] 
+class LedgerAccountSerializer(serializers.ModelSerializer):
+    sub_accounts = SubAccountSerializer(many=True, required=False)
 
-# Serializer for SubOneAccount
-class SubOneAccountSerializer(serializers.ModelSerializer):
-    one_layer_account = SubTwoAccountSerializer(many=True, read_only=True)
     class Meta:
-        model = SubOneAccount
-        fields = ['id', 'name', 'parent', 'one_layer_account'] 
+        model = LedgerAccount
+        fields = ['id', 'ledger_name', 'account_type', 'status_change', 'sub_accounts']
 
-# Serializer for SubSAccount
-class SubSAccountSerializer(serializers.ModelSerializer):
-    sub_account = SubOneAccountSerializer(many=True, read_only=True)
-    
-    class Meta:
-        model = SubSAccount
-        fields = ['id', 'name', 'parent', 'sub_account']
+    def create(self, validated_data):
+        sub_accounts_data = validated_data.pop('sub_accounts', [])
+        ledger_account = LedgerAccount.objects.create(**validated_data)
 
-# Serializer for LegerAccount
-class LegerAccountSerializer(serializers.ModelSerializer):
-    subs_accounts = SubSAccountSerializer(many=True, read_only=True)
-    
-    class Meta:
-        model = LegerAccount
-        fields = ['id', 'LegerName', 'type', 'type_status', 'subs_accounts']
+        # Assign ledger_account to each sub-account recursively
+        for sub_account_data in sub_accounts_data:
+            sub_account_data['ledger_account'] = ledger_account
+            SubAccountSerializer().create(sub_account_data)
+
+        return ledger_account

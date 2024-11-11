@@ -1,5 +1,5 @@
 from django.db import models
-from apps.account.models import LegerAccount
+from apps.account.models import LedgerAccount
 from apps.users.models import CustomUser
 from apps.inventory.models import OrderUnit
 from apps.organization.models import Tax, Department
@@ -26,7 +26,7 @@ class SalesItem(models.Model):
         ('complted', 'Completd'),
     ])
     # This belong to the Leger sub account, by default each account inside of inventory items has an account.
-    account = models.ForeignKey(LegerAccount, on_delete=models.CASCADE)
+    account = models.ForeignKey(LedgerAccount, on_delete=models.CASCADE)
     def __str__(self):
         return str(self.name)
     
