@@ -14,8 +14,9 @@ class CustomUser(AbstractUser):
         ('clients', 'Clients'),
     )
    
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='storekeeper')
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    
+    organization = models.ForeignKey(Organization, related_name='userOrganization', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.email

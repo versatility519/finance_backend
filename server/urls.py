@@ -32,7 +32,7 @@ urlpatterns = [
 
     path('api/', include('apps.invoice.urls')), 
     path('api/', include('apps.bill.urls')), 
-    # path('api/', include('apps.sales.urls')), 
+    path('api/', include('apps.sales.urls')), 
 
     path('api/', include('apps.journal.urls')),
     path('api/', include('apps.inventory.urls')),

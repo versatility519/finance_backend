@@ -3,7 +3,7 @@ from rest_framework import generics
 
 from .models import (
     InventoryItem,
-    Reception, ReceptionItem, 
+    Reception, ReceptionItem, ReceptionDoc,
     Reservation, ReservationItem,
     Transfert, TransfertItem,
     Issue, IssueItem,
@@ -18,7 +18,7 @@ from .serializers import (
     OrderUnitSerializer, IssueUnitSerializer,
 
     TransfertSerializer, TransfertItemSerializer,
-    ReceptionSerializer, ReceptionItemSerializer,
+    ReceptionSerializer, ReceptionItemSerializer, ReceptionDocSerializer,
     ReservationSerializer, ReservationItemSerializer,
     BinSerializer, LocationSerializer, StoreroomSerializer
 )
@@ -72,6 +72,13 @@ class ReservationDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
 
+class ReceptionDocListCreateView(generics.ListCreateAPIView):
+    queryset = ReceptionDoc.objects.all()
+    serializer_class = ReceptionDocSerializer
+
+class ReceptionDocDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ReceptionDoc.objects.all()
+    serializer_class = ReceptionDocSerializer
 
 class ReceptionItemListCreateView(generics.ListCreateAPIView):
     queryset = ReceptionItem.objects.all()

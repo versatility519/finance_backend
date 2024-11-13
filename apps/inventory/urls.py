@@ -12,6 +12,9 @@ from .views import (
     IssueUnitDetailView, IssueUnitListCreateView,
     OrderUnitDetailView, OrderUnitListCreateView,
 
+    ReceptionDocListCreateView,
+    ReceptionDocDetailView,
+
     ReceptionListCreateView,
     ReceptionDetailView,
 
@@ -49,6 +52,9 @@ urlpatterns = [
 
     path('bins', BinListCreateView.as_view(), name='bin-list-create'),
     path('bins/<int:pk>', BinDetailView.as_view(), name='bin-detail'),
+    
+    path('reception-docs', ReceptionDocListCreateView.as_view(), name='receptiondoc-list-create'),
+    path('reception-docs/<int:pk>', ReceptionDocDetailView.as_view(), name='receptiondoc-detail'),
 
     path('receptions', ReceptionListCreateView.as_view(), name='reception-list-create'),
     path('receptions/<int:pk>', ReceptionDetailView.as_view(), name='reception-detail'),

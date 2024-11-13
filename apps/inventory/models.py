@@ -6,7 +6,7 @@ from apps.account.models import LedgerAccount
 
 from apps.project.models import Project
 
-# from apps.supplier.models import Supplier 
+from apps.supplier.models import Supplier 
 
 class OrderUnit(models.Model):
     name = models.CharField(max_length=100)
@@ -22,19 +22,13 @@ class IssueUnit(models.Model):
    
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    
     def __str__(self):
         return self.name
     
 class SubCategory(models.Model):
     name = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    def __str__(self):
-        return self.name
-
-class ReceptionDoc(models.Model):
-    name = models.CharField(max_length=100)
-    docs = models.FileField(upload_to='documents/inventorys')
-    
     def __str__(self):
         return self.name
 
@@ -58,13 +52,21 @@ class Bin(models.Model):
    
     def __str__(self):
         return self.bin_name
+    
+class ReceptionDoc(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
+    doc_file = models.FileField(upload_to='documents/reception')
+    
+    def __str__(self):
+        return self.name
 
 class ReceptionItem(models.Model):
     item_name = models.CharField(max_length=100)
     item_code = models.CharField(max_length=100)
     item_description = models.TextField()
     item_manufacturer = models.CharField(max_length=100)
-    item_manufacCode = models.CharField(max_length=100)
+    item_manufacturer_code = models.CharField(max_length=100)
 
     item_quantity = models.FloatField()
     item_bin = models.ForeignKey(Bin, on_delete=models.CASCADE)
@@ -73,7 +75,7 @@ class ReceptionItem(models.Model):
         return self.item_name
     
 class Reception(models.Model):
-    pur_order = models.PositiveIntegerField()
+    po_number = models.PositiveIntegerField()
     items = models.ForeignKey('ReceptionItem',on_delete=models.CASCADE)
     notes = models.CharField(max_length=100)
     storekeeper = models.ForeignKey(
@@ -83,18 +85,20 @@ class Reception(models.Model):
     )
     recep_doc = models.ForeignKey('ReceptionDoc', on_delete=models.CASCADE)
     
+    purchase_order = models.ForeignKey('purchaseOrder.PurchaseOrder', related_name='purchaseOrder', on_delete=models.CASCADE)
+    
     date_received = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.notes
+        return self.notes    
     
 class ReservationItem(models.Model):
     item_name = models.CharField(max_length=100)
     item_code = models.CharField(max_length=100)
     item_description = models.TextField()
     item_manufacturer = models.CharField(max_length=100)
-    item_manufacCode = models.CharField(max_length=100)
+    item_manufacturer_code = models.CharField(max_length=100)
     item_quantity = models.FloatField()
     measureUnit = models.ForeignKey('IssueUnit', on_delete=models.CASCADE)
 
@@ -108,10 +112,11 @@ class Reservation(models.Model):
         ('completed', 'Completed'),
         ('cancel', 'Cancelled'),
     ]
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateField()
     items = models.ForeignKey('ReservationItem',on_delete=models.CASCADE)
     reserved_date = models.DateTimeField(auto_now_add=True)
     reason = models.CharField(max_length=100)
+    project = models.ForeignKey(Project, blank=True, null=True, on_delete=models.CASCADE)
     reserved_by = models.ForeignKey(
         CustomUser, 
         related_name='reservation_as_reserved_by',
@@ -133,7 +138,7 @@ class IssueItem(models.Model):
     item_code = models.CharField(max_length=100)
     item_description = models.TextField()
     item_manufacturer = models.CharField(max_length=100)
-    item_manufacCode = models.CharField(max_length=100)
+    item_manufacturer_code = models.CharField(max_length=100)
     item_quantity = models.FloatField()
     measureUnit = models.ForeignKey('IssueUnit', on_delete=models.CASCADE)
     
@@ -141,6 +146,8 @@ class IssueItem(models.Model):
         return self.item_name
     
 class Issue(models.Model):
+    name = models.CharField(max_length=100)
+    
     created_date = models.DateField()
     items = models.ForeignKey('IssueItem',on_delete=models.CASCADE)
     reason = models.CharField(max_length=100)
@@ -168,7 +175,7 @@ class TransfertItem(models.Model):
     item_name = models.CharField(max_length=100)
     item_description = models.TextField()
     item_manufacturer = models.CharField(max_length=100)
-    item_manufacCode = models.CharField(max_length=100)
+    item_manufacturer_code = models.CharField(max_length=100)
 
     item_quantity = models.FloatField()
 
@@ -200,22 +207,28 @@ class Transfert(models.Model):
 class InventoryItem(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    item_code = models.CharField(max_length=100)
+    
+    order_unit = models.ForeignKey('OrderUnit', on_delete=models.CASCADE)
+    issue_unit = models.ForeignKey('IssueUnit', on_delete=models.CASCADE)
+    
     preferred_supplier = models.ForeignKey(
-        'supplier.Supplier',
+        Supplier,
         on_delete=models.CASCADE,
         related_name='preferred_inventory_items',
     )
-    order_unit = models.ForeignKey('OrderUnit', on_delete=models.CASCADE)
-    issue_unit = models.ForeignKey('IssueUnit', on_delete=models.CASCADE)
+    account = models.ForeignKey(LedgerAccount, on_delete=models.CASCADE)
+    
     manufacturer = models.CharField(max_length=100)
     manufacturer_code = models.CharField(max_length=100)
+    item_code = models.CharField(max_length=100)
+    
     price = models.DecimalField(max_digits=10, decimal_places=3)
     min_quantity = models.FloatField()
     max_quantity = models.FloatField()
     current_balance = models.FloatField()
     physical_count = models.FloatField()
     image = models.ImageField(upload_to='images/inventory_images/', blank=True, null=True)
+    
     bin = models.ForeignKey('Bin', on_delete=models.CASCADE)
     
     reorder = models.BooleanField(default=False)
@@ -235,7 +248,7 @@ class InventoryItem(models.Model):
         on_delete=models.CASCADE,
         related_name='inventory_items',
     )
-    account = models.ForeignKey(LedgerAccount, on_delete=models.CASCADE)
+
     sub_category = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
 
     def __str__(self):

@@ -1,59 +1,87 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from apps.account.models import LedgerAccount
 from apps.users.models import CustomUser
-from apps.inventory.models import OrderUnit
+from apps.inventory.models import IssueUnit
 from apps.organization.models import Tax, Department
-# Create your models here.
 
 class SalesItem(models.Model):
     item_name = models.CharField(max_length=100)
     description = models.TextField(max_length=200)
-    measureUnit = models.ForeignKey(OrderUnit, on_delete=models.CASCADE)   
     
     manufacturer = models.CharField(max_length=100)
     manufacturer_code = models.CharField(max_length=100)
+    measure_unit = models.ForeignKey(IssueUnit, on_delete=models.CASCADE)
 
+    item_code = models.CharField(max_length=100)
     quantity = models.DecimalField(max_digits=10, decimal_places=3)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
-
+    
+    net_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    tax_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
     tax_group = models.ForeignKey(Tax, on_delete=models.CASCADE)
 
     status = models.CharField(max_length=100, choices=[
         ('created', 'Created'),
         ('approved', 'Approved'),
-        ('partially_received', 'Partially_Received'),
-        ('complted', 'Completd'),
+        ('partially_received', 'Partially Received'),
+        ('completed', 'Completed'),
     ])
-    # This belong to the Leger sub account, by default each account inside of inventory items has an account.
     account = models.ForeignKey(LedgerAccount, on_delete=models.CASCADE)
-    def __str__(self):
-        return str(self.name)
+    sales = models.ForeignKey('Sales', related_name='items', on_delete=models.CASCADE)
     
+    def __str__(self):
+        return self.item_name
+    
+    def clean(self):
+        if self.quantity < 0:
+            raise ValidationError('Quantity cannot be negative.')
+        if self.price < 0:
+            raise ValidationError('Price cannot be negative.')
+    
+    def save(self, *args, **kwargs):
+        print("Saving Sales Item...")
+        if self.tax_group:
+            self.tax_amount = self.quantity * self.price * self.tax_group.tax_rate
+        else:
+            self.tax_amount = 0
+        self.net_amount = self.quantity * self.price
+        super().save(*args, **kwargs)
+
 class Sales(models.Model):
-    sales_number = models.PositiveIntegerField()
-    created_date = models.DateField(auto_now=True)
+    sales_number = models.CharField(max_length=100)
+    created_date = models.DateField()
+    
     ship_to = models.CharField(max_length=100)
     bill_to = models.CharField(max_length=100)
-    items = models.ForeignKey('SalesItem', on_delete=models.CASCADE)
-
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
 
     approved = models.BooleanField(default=False)
-    # ForeignKey to User that should belong to manager user group
     approved_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='approved_sales')
-    # ForeignKey(User models) only Buyer should be able to create purchase order
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='created_sales')
     
     status = models.CharField(max_length=20, choices=[
         ('created', 'Created'),
         ('approved', 'Approved'),
         ('sent', 'Sent'),
-        ('paritially_Received', 'Paritially Received'),
+        ('partially_received', 'Partially Received'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
     ])
     
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    total_tax_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    total_net_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    
     def __str__(self):
-        return self.name
-   
+        return self.sales_number
+
+    def save(self, *args, **kwargs):
+        
+        self.sales_number = f'SALES-{self.sales_number}'
+        
+        # Calculate total values based on related SalesItems
+        self.total_net_amount = sum(item.net_amount for item in self.items.all())
+        self.total_tax_amount = sum(item.tax_amount for item in self.items.all())
+        self.total_amount = self.total_net_amount + self.total_tax_amount
+        super().save(*args, **kwargs)

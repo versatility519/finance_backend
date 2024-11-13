@@ -1,6 +1,5 @@
 from django.db import models
 from apps.users.models import CustomUser
-from apps.inventory.models import OrderUnit
 from apps.account.models import LedgerAccount
 # Create your models here.
 
@@ -11,6 +10,7 @@ class Supplier(models.Model):
     shipping_address = models.TextField(max_length=200)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
     account = models.ForeignKey(LedgerAccount, on_delete=models.CASCADE, null=True, blank=True)
+    order_unit = models.ForeignKey('inventory.OrderUnit', on_delete=models.CASCADE)
     
     def __str__(self):
         return str(self.supplier_name)
@@ -24,7 +24,7 @@ class SupplierItem(models.Model):
     manufacturer_code = models.CharField(max_length=100)
     
     quantity = models.DecimalField(max_digits=10, decimal_places=3)
-    measure_unit = models.ForeignKey(OrderUnit, on_delete=models.CASCADE)   
+    measure_unit = models.ForeignKey('inventory.OrderUnit', on_delete=models.CASCADE)   
 
     growth = models.BooleanField(default=False)
     growth_fre = models.CharField(max_length=100, choices=[

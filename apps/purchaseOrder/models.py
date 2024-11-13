@@ -62,6 +62,7 @@ class PurchaseOrder(models.Model):
     ship_to = models.CharField(max_length=100)
     bill_to = models.CharField(max_length=100)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    order_unit = models.ForeignKey('inventory.OrderUnit', on_delete=models.CASCADE)
 
     status = models.CharField(max_length=100, choices=[
         ('created', 'Created'),

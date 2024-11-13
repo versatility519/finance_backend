@@ -2,16 +2,13 @@ from rest_framework import serializers
 from apps.supplier.models import Supplier, SupplierItem, SupplierContact
 
 from apps.users.models import CustomUser
-from apps.users.serializers import UserSerializer
+# from apps.users.serializers import UserSerializer
 
 from apps.inventory.models import OrderUnit
 from apps.inventory.serializers import OrderUnitSerializer
 
 from apps.account.models import LedgerAccount
 from apps.account.serializers import LedgerAccountSerializer
-
-from apps.organization.models import Tax
-from apps.organization.serializers import TaxSerializer
 
 class SupplierItemSerializer(serializers.ModelSerializer):
     measure_unit = serializers.PrimaryKeyRelatedField(queryset=OrderUnit.objects.all())
@@ -60,7 +57,7 @@ class SupplierSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['account'] = LedgerAccountSerializer(instance.account).data
         
-        representation['user'] = UserSerializer(instance.user).data
+        # representation['user'] = UserSerializer(instance.user).data
         
         representation['supplier_contact'] = SupplierContactSerializer(instance.supplier_contact.all(), many=True).data
         
