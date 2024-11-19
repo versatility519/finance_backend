@@ -42,11 +42,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',  # Add this for token authentication
     
+    'apps.account',
     'apps.users',
     'apps.client',
     'apps.organization',
     'apps.supplier',
-    'apps.account',
 
     'apps.project',
     
@@ -58,10 +58,10 @@ INSTALLED_APPS = [
     'apps.inventory',
     
     'apps.requisition',
-   
+    'apps.purchaseOrder',
+    'apps.tAccount',    
     
     'apps.production',
-    'apps.purchaseOrder',
 ]
  
 REST_FRAMEWORK = {

@@ -1,5 +1,5 @@
 from django.db import models
-from apps.supplier.models import Supplier, SupplierContact
+# from apps.supplier.models import Supplier, SupplierContact
 from apps.inventory.models import OrderUnit
 from apps.account.models import LedgerAccount    
 from apps.organization.models import Tax
@@ -50,9 +50,10 @@ class BillItem(models.Model):
         super().save(*args, **kwargs)
 
 class Bill(models.Model):
+    id = models.AutoField(primary_key=True)
     bill_num = models.CharField(max_length=100)
     date_created = models.DateField(auto_now=True)
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    supplier = models.ForeignKey('supplier.Supplier', on_delete=models.CASCADE)
     required_date = models.DateField()
     
     status = models.CharField(max_length=20, choices=[
@@ -72,7 +73,7 @@ class Bill(models.Model):
     total_tax_amount = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
     
-    contact = models.ForeignKey(SupplierContact, on_delete=models.CASCADE, null=True, blank=True)    
+    contact = models.ForeignKey('supplier.SupplierContact', on_delete=models.CASCADE, null=True, blank=True)    
     purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):

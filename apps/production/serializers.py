@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework import serializers
 from .models import Production, ProductionItem, Pdocument
 
@@ -13,6 +14,13 @@ class PdocumentSerializer(serializers.ModelSerializer):
         model = Pdocument
         fields = ['id', 'doc_name', 'description', 'docfile', 'production']
 
+    def create(self, validated_data):
+        max_id = Pdocument.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        production_doc = Pdocument.objects.create(**validated_data)
+        return production_doc     
+     
 class ProductionItemSerializer(serializers.ModelSerializer):
     measure_unit = serializers.PrimaryKeyRelatedField(queryset=OrderUnit.objects.all())
     class Meta:
@@ -20,6 +28,14 @@ class ProductionItemSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'description', 'quantity', 'manufacturer', 'manufacturer_code', 'measure_unit', 'approved', 'approved_quantity', 'status', 'production'
             ]
+    
+    def create(self, validated_data):
+        max_id = ProductionItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        production_item = ProductionItem.objects.create(**validated_data)
+        return production_item   
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['measure_unit'] = OrderUnitSerializer(instance.measure_unit).data
@@ -44,6 +60,13 @@ class ProductionSerializer(serializers.ModelSerializer):
             self.fields.pop('documents', None)
         super().__init__(*args, **kwargs)
 
+    def create(self, validated_data):
+        max_id = Production.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        production = Production.objects.create(**validated_data)
+        return production  
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)        
         representation['project'] = ProjectSerializer(instance.project).data

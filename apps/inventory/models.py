@@ -6,8 +6,6 @@ from apps.account.models import LedgerAccount
 
 from apps.project.models import Project
 
-from apps.supplier.models import Supplier 
-
 class OrderUnit(models.Model):
     name = models.CharField(max_length=100)
 
@@ -212,7 +210,7 @@ class InventoryItem(models.Model):
     issue_unit = models.ForeignKey('IssueUnit', on_delete=models.CASCADE)
     
     preferred_supplier = models.ForeignKey(
-        Supplier,
+        'supplier.Supplier',
         on_delete=models.CASCADE,
         related_name='preferred_inventory_items',
     )
@@ -246,7 +244,7 @@ class InventoryItem(models.Model):
     suppliers = models.ForeignKey(
         'supplier.Supplier',
         on_delete=models.CASCADE,
-        related_name='inventory_items',
+        related_name='supplier_inventory_items',
     )
 
     sub_category = models.ForeignKey('SubCategory', on_delete=models.CASCADE)

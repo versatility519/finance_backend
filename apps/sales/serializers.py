@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework import serializers
 from django.core.exceptions import ValidationError
 
@@ -28,6 +29,13 @@ class SalesItemSerializer(serializers.ModelSerializer):
             'manufacturer_code', 'status', 'quantity', 'price', 'net_amount', 
             'tax_amount', 'tax_group', 'account', 'sales'
         ]
+
+    def create(self, validated_data):
+        max_id = SalesItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        sales_item = SalesItem.objects.create(**validated_data)
+        return sales_item
         
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -35,7 +43,6 @@ class SalesItemSerializer(serializers.ModelSerializer):
         representation['account'] = LedgerAccountSerializer(instance.account).data
         representation['measure_unit'] = IssueUnitSerializer(instance.measure_unit).data
         return representation
-
 
 class SalesSerializer(serializers.ModelSerializer):
     items = SalesItemSerializer(many=True, required=False)
@@ -51,12 +58,10 @@ class SalesSerializer(serializers.ModelSerializer):
             'total_net_amount', 'total_tax_amount', 'total_amount', 'items'
         ]
         
-    
     #  if not request.user.groups.filter(name='Buyer').exists():
     #         raise ValidationError("Only users with the Buyer role can create sales.")
     #     validated_data['created_by'] = request.user
     #     return super().create(validated_data)
-            
 
     def create(self, validated_data):
         items_data = validated_data.pop('items', [])
@@ -69,6 +74,10 @@ class SalesSerializer(serializers.ModelSerializer):
         if not user.groups.filter(name='Buyer').exists():
             raise ValidationError("Only users with the Buyer role can create sales.")
         
+        max_id = Sales.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        
+        validated_data['id'] = new_id
         # Set the created_by field to the authenticated user
         validated_data['created_by'] = user
         

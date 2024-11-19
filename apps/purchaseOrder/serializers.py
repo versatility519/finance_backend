@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework import serializers
 from .models import PurchaseOrder, PurchaseOrderItem, PurchaseDocument
 from apps.inventory.models import OrderUnit
@@ -14,6 +15,13 @@ class PurchaseDocumentSerializer(serializers.ModelSerializer):
         model = PurchaseDocument
         fields = ['id', 'doc_name', 'description', 'docfile', 'purchase_order']
 
+    def create(self, validated_data):
+        max_id = PurchaseDocument.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        purchase_doc = PurchaseDocument.objects.create(**validated_data)
+        return purchase_doc
+    
 class PurchaseOrderItemSerializer(serializers.ModelSerializer):
     measure_unit = serializers.PrimaryKeyRelatedField(queryset=OrderUnit.objects.all())
     tax_group = serializers.PrimaryKeyRelatedField(queryset=Tax.objects.all())
@@ -23,7 +31,14 @@ class PurchaseOrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOrderItem
         fields = ['id', 'name', 'description', 'manufacturer', 'manufacturer_code', 'measure_unit', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'account', 'purchaseOrder']
-   
+
+    def create(self, validated_data):
+        max_id = PurchaseOrderItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        purchaseOrder_item = PurchaseOrderItem.objects.create(**validated_data)
+        return purchaseOrder_item
+       
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['tax_group'] = TaxSerializer(instance.tax_group).data
@@ -54,7 +69,14 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
             self.fields.pop('items', None)
             self.fields.pop('documents', None)
         super().__init__(*args, **kwargs)
-
+        
+    def create(self, validated_data):
+        max_id = PurchaseOrder.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        purchaseOrder = PurchaseOrder.objects.create(**validated_data)
+        return purchaseOrder
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['items'] = PurchaseOrderItemSerializer(instance.items.all(), many=True).data

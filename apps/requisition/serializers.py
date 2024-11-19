@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework import serializers
 from .models import Requisition, RequisitionItem, RequisitionDoc
 from apps.organization.models import Tax, Department
@@ -16,18 +17,31 @@ class RequisitionDocSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequisitionDoc
         fields = ['id', 'name', 'docs', 'requisition']
+    
+    def create(self, validated_data):
+        max_id = RequisitionDoc.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        requisition_docs = RequisitionDoc.objects.create(**validated_data)
+        return requisition_docs
 
 class RequisitionItemSerializer(serializers.ModelSerializer):
     tax_group = serializers.PrimaryKeyRelatedField(queryset=Tax.objects.all())
     supplier = serializers.PrimaryKeyRelatedField(queryset=Supplier.objects.all())
     measureUnit = serializers.PrimaryKeyRelatedField(queryset=OrderUnit.objects.all())
-
     requisition = serializers.PrimaryKeyRelatedField(queryset=Requisition.objects.all())
     
     class Meta:
         model = RequisitionItem
         fields = ['id', 'name', 'description', 'measureUnit', 'manufacturer', 'manufacturer_code', 'supplier', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'reception_quantity', 'requisition']
-        
+    
+    def create(self, validated_data):
+        max_id = RequisitionItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        requisition_item = RequisitionItem.objects.create(**validated_data)
+        return requisition_item
+    
     def __init__(self, *args, **kwargs):
         request = kwargs.get('context', {}).get('request', None)
         if request and request.method == 'POST':
@@ -70,7 +84,14 @@ class RequisitionSerializer(serializers.ModelSerializer):
             self.fields.pop('total_net_amount', None)
             self.fields.pop('total_amount', None)
         super().__init__(*args, **kwargs)
- 
+    
+    def create(self, validated_data):
+        max_id = Requisition.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        requisition = Requisition.objects.create(**validated_data)
+        return requisition
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['items'] = RequisitionItemSerializer(instance.items, many=True).data

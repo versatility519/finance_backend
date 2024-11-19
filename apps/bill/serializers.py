@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db import models
 
 from .models import Bill, BillItem, BillDoc, Terms
 
@@ -19,10 +20,24 @@ class BillDocSerializer(serializers.ModelSerializer):
         model = BillDoc
         fields = ['id', 'name', 'description', 'doc_file', 'bill']
 
+    def create(self, validated_data):
+        max_id = BillDoc.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        bill_doc = BillDoc.objects.create(**validated_data)
+        return bill_doc 
+
 class TermsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Terms
         fields = ['id', 'name']
+
+    def create(self, validated_data):
+        max_id = Terms.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        bill_term = Terms.objects.create(**validated_data)
+        return bill_term 
 
 class BillItemSerializer(serializers.ModelSerializer):
     account = serializers.PrimaryKeyRelatedField(queryset=LedgerAccount.objects.all())
@@ -34,6 +49,13 @@ class BillItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillItem
         fields = ['id', 'name', 'description', 'account', 'measure_unit', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'bill']
+
+    def create(self, validated_data):
+        max_id = BillItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        bill_item = BillItem.objects.create(**validated_data)
+        return bill_item 
 
     def __init__(self, *args, **kwargs):
         request = kwargs.get('context', {}).get('request', None)
@@ -56,11 +78,16 @@ class BillSerializer(serializers.ModelSerializer):
     supplier = serializers.PrimaryKeyRelatedField(queryset=Supplier.objects.all())
     contact = serializers.PrimaryKeyRelatedField(queryset=SupplierContact.objects.all())
     
- 
     class Meta:
         model = Bill
-        fields = ['id', 'bill_num', 'date_created', 'supplier', 'items', 'required_date', 'status', 'ship_to', 'bill_to', 'total_tax_amount', 'total_net_amount', 'total_amount', 'terms', 'billDocs', 'contact' 
-            ]
+        fields = ['id', 'bill_num', 'date_created', 'supplier', 'items', 'required_date', 'status', 'ship_to', 'bill_to', 'total_tax_amount', 'total_net_amount', 'total_amount', 'terms', 'billDocs', 'contact']
+        
+    def create(self, validated_data):
+        max_id = Bill.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        bills = Bill.objects.create(**validated_data)
+        return bills 
     
     def __init__(self, *args, **kwargs):
         request = kwargs.get('context', {}).get('request', None)

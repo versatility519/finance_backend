@@ -1,7 +1,13 @@
 from django.urls import path
-from .views import LedgerAccountCreateListView, LedgerAccountDetailView
+from .views import (
+    LedgerAccountCreateListView, LedgerAccountDetailView,
+    SubAccountCreateListView, SubAccountDetailView
+)
 
 urlpatterns = [
-    path('ledger-accounts', LedgerAccountCreateListView.as_view(), name='ledgeraccount-list-create'),
-    path('ledger-accounts/<int:id>', LedgerAccountDetailView.as_view(), name='ledgeraccount-detail'),
+    path('ledger-accounts', LedgerAccountCreateListView.as_view(), name='ledger-account-list'),
+    path('ledger-accounts/<int:pk>', LedgerAccountDetailView.as_view(), name='ledger-account-detail'),
+    
+    path('sub-accounts', SubAccountCreateListView.as_view(), name='sub-account-lists'),
+    path('sub-accounts/<int:pk>', SubAccountDetailView.as_view(), name='sub-account-lidetailsts')
 ]

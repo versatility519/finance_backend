@@ -1,5 +1,5 @@
+from django.db import models
 from rest_framework import serializers
-
 from apps.users.models import CustomUser
 from apps.users.serializers import UserSerializer
 
@@ -25,17 +25,38 @@ class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubCategory
         fields = ['id', 'name', 'category']
+        
+    def create(self, validated_data):
+        max_id = SubCategory.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        sub_category = SubCategory.objects.create(**validated_data)
+        return sub_category  
 
 class StoreroomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Storeroom
         fields = ['id', 'name', 'address', 'bill_to']
 
+    def create(self, validated_data):
+        max_id = Storeroom.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        store_room = Storeroom.objects.create(**validated_data)
+        return store_room  
+
 class LocationSerializer(serializers.ModelSerializer):
     storeroom = StoreroomSerializer()
     class Meta:
         model = Location
         fields = ['id', 'name', 'storeroom']
+
+    def create(self, validated_data):
+        max_id = Location.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        store_location = Location.objects.create(**validated_data)
+        return store_location  
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -48,6 +69,13 @@ class BinSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bin
         fields = ['id', 'bin_name', 'bin_location']
+
+    def create(self, validated_data):
+        max_id = Bin.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        bin = Bin.objects.create(**validated_data)
+        return bin  
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -59,10 +87,24 @@ class OrderUnitSerializer(serializers.ModelSerializer):
         model = OrderUnit
         fields = ['id', 'name']
 
+    def create(self, validated_data):
+        max_id = OrderUnit.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        order_unit = OrderUnit.objects.create(**validated_data)
+        return order_unit  
+    
 class IssueUnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = IssueUnit
         fields = ['id', 'name']
+
+    def create(self, validated_data):
+        max_id = OrderUnit.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        issue_unit = OrderUnit.objects.create(**validated_data)
+        return issue_unit  
 
 class IssueItemSerializer(serializers.ModelSerializer):
     measureUnit = serializers.PrimaryKeyRelatedField(queryset=IssueUnit.objects.all())
@@ -70,7 +112,14 @@ class IssueItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = IssueItem
         fields = ['id', 'item_name', 'item_code', 'item_description', 'item_manufacturer', 'item_manufacturer_code', 'item_quantity', 'measureUnit']
-
+    
+    def create(self, validated_data):
+        max_id = IssueItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        issue_item = IssueItem.objects.create(**validated_data)
+        return issue_item  
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['measureUnit'] = IssueUnitSerializer(instance.measureUnit).data
@@ -85,7 +134,14 @@ class IssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
         fields = ['id', 'name', 'created_date', 'items', 'reason', 'storekeeper', 'notes', 'project']
-           
+
+    def create(self, validated_data):
+        max_id = Issue.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        issues = Issue.objects.create(**validated_data)
+        return issues  
+          
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['storekeeper'] = UserSerializer(instance.storekeeper).data
@@ -99,7 +155,14 @@ class ReservationItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReservationItem
         fields = ['id', 'item_name', 'item_description', 'item_code', 'item_manufacturer', 'item_manufacturer_code', 'item_quantity', 'measureUnit']
-
+    
+    def create(self, validated_data):
+        max_id = ReservationItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        reservation_item = ReservationItem.objects.create(**validated_data)
+        return reservation_item 
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['measureUnit'] = IssueUnitSerializer(instance.measureUnit).data
@@ -114,7 +177,14 @@ class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = ['id', 'date', 'items', 'reason', 'reserved_date', 'reserved_by','storekeeper', 'status', 'project']
-        
+
+    def create(self, validated_data):
+        max_id = Reservation.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        reservation = Reservation.objects.create(**validated_data)
+        return reservation 
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['storekeeper'] = UserSerializer(instance.storekeeper).data
@@ -127,13 +197,27 @@ class ReceptionDocSerializer(serializers.ModelSerializer):
         model = ReceptionDoc
         fields = ['id', 'name', 'description', 'doc_file']
         
+    def create(self, validated_data):
+        max_id = ReceptionDoc.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        reception_doc = ReceptionDoc.objects.create(**validated_data)
+        return reception_doc 
+        
 class ReceptionItemSerializer(serializers.ModelSerializer):
     item_bin = serializers.PrimaryKeyRelatedField(queryset=Bin.objects.all()) 
     
     class Meta:
         model = ReceptionItem
         fields = ['id', 'item_name', 'item_code', 'item_description', 'item_manufacturer', 'item_manufacturer_code', 'item_quantity', 'item_bin']
-
+        
+    def create(self, validated_data):
+        max_id = ReceptionItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        reception_item = ReceptionItem.objects.create(**validated_data)
+        return reception_item 
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['item_bin'] = BinSerializer(instance.item_bin).data
@@ -150,7 +234,14 @@ class ReceptionSerializer(serializers.ModelSerializer):
         model = Reception
         fields = ['id', 'po_number', 'items', 'notes', 'storekeeper', 'recep_doc', 'purchase_order']
         read_only = ['date_received', 'date_updated']
-
+        
+    def create(self, validated_data):
+        max_id = Reception.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        receptions = Reception.objects.create(**validated_data)
+        return receptions 
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['items'] = ReceptionItemSerializer(instance.items).data
@@ -160,13 +251,19 @@ class ReceptionSerializer(serializers.ModelSerializer):
         return representation
 
 class TransfertItemSerializer(serializers.ModelSerializer):
-
     item_bin = serializers.PrimaryKeyRelatedField(queryset=Bin.objects.all()) 
     
     class Meta:
         model = TransfertItem
         fields = ['id', 'item_name', 'item_description', 'item_manufacturer', 'item_manufacCode', 'item_quantity', 'item_bin', 'status']
 
+    def create(self, validated_data):
+        max_id = TransfertItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        transfert_item = TransfertItem.objects.create(**validated_data)
+        return transfert_item 
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['item_bin'] = BinSerializer(instance.item_bin).data
@@ -181,6 +278,13 @@ class TransfertSerializer(serializers.ModelSerializer):
         model = Transfert
         fields = ['id', 'trans_number', 'date', 'trans_items', 'reason', 'created_by', 'status', 'bin' ]
 
+    def create(self, validated_data):
+        max_id = Transfert.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        transferts = Transfert.objects.create(**validated_data)
+        return transferts 
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['trans_items'] = TransfertItemSerializer(instance.trans_items).data
@@ -189,7 +293,6 @@ class TransfertSerializer(serializers.ModelSerializer):
         return representation
 
 class InventoryItemSerializer(serializers.ModelSerializer):
-
     order_unit = serializers.PrimaryKeyRelatedField(queryset=OrderUnit.objects.all())
     issue_unit = serializers.PrimaryKeyRelatedField(queryset=IssueUnit.objects.all())
     sub_category = serializers.PrimaryKeyRelatedField(queryset=SubCategory.objects.all())
@@ -198,7 +301,14 @@ class InventoryItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = InventoryItem
         fields = ['id', 'name', 'item_code', 'description', 'order_unit', 'issue_unit', 'manufacturer', 'manufacturer_code', 'price', 'min_quantity', 'max_quantity', 'current_balance', 'physical_count', 'image', 'bin', 'reorder', 'reorder_point', 'reorder_quantity', 'type', 'preferred_supplier', 'suppliers', 'account', 'sub_category']
-
+    
+    def create(self, validated_data):
+        max_id = InventoryItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        inventory_item = InventoryItem.objects.create(**validated_data)
+        return inventory_item 
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['order_unit'] = OrderUnitSerializer(instance.order_unit).data

@@ -1,6 +1,6 @@
+from django.db import models
 from rest_framework import serializers
-from django.core.exceptions import  ValidationError
-from datetime import timedelta
+
 from .models import Invoice, InvoiceItem, InvoiceDoc, Terms
 
 from apps.inventory.models import IssueUnit
@@ -20,10 +20,24 @@ class InvoiceDocSerializer(serializers.ModelSerializer):
         model = InvoiceDoc
         fields = ['id', 'name', 'description', 'doc_file', 'invoice']
 
+    def create(self, validated_data):
+        max_id = InvoiceDoc.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        invoice_doc = InvoiceDoc.objects.create(**validated_data)
+        return invoice_doc  
+
 class TermsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Terms
         fields = ['id', 'name']
+        
+    def create(self, validated_data):
+        max_id = Terms.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        invoice_term = Terms.objects.create(**validated_data)
+        return invoice_term  
 
 class InvoiceItemSerializer(serializers.ModelSerializer):
     account = serializers.PrimaryKeyRelatedField(queryset=LedgerAccount.objects.all()) 
@@ -35,7 +49,14 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceItem
         fields = ['id', 'name', 'description', 'account', 'measure_unit', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'invoice']
-   
+    
+    def create(self, validated_data):
+        max_id = InvoiceItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        invoice_item = InvoiceItem.objects.create(**validated_data)
+        return invoice_item  
+    
     def __init__(self, *args, **kwargs):
         request = kwargs.get('context', {}).get('request', None)
         if request and request.method == 'POST':
@@ -78,7 +99,14 @@ class InvoiceSerializer(serializers.ModelSerializer):
             self.fields.pop('total_net_amount', None)
             self.fields.pop('total_amount', None)
         super().__init__(*args, **kwargs)
- 
+    
+    def create(self, validated_data):
+        max_id = Invoice.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        invoice = Invoice.objects.create(**validated_data)
+        return invoice  
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['items'] = InvoiceItemSerializer(instance.items.all(), many=True).data
