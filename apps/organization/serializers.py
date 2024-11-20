@@ -5,7 +5,7 @@ from .models import Organization, Tax, Department
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'created_at']
     
     def create(self, validated_data):
         max_id = Department.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -19,7 +19,7 @@ class TaxSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Tax
-        fields = ['id', 'tax_name', 'tax_rate', 'description', 'organization']
+        fields = ['id', 'tax_name', 'tax_rate', 'description', 'organization', 'created_at']
             
     def create(self, validated_data):
         max_id = Tax.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -34,12 +34,12 @@ class TaxSerializer(serializers.ModelSerializer):
         return representation
         
 class OrganizationSerializer(serializers.ModelSerializer):
-    department = DepartmentSerializer()
-  
+    department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all())
+    
     class Meta:
         model = Organization
-        fields = ('id', 'name', 'address', 'department', 'created_at', 'updated_at')
-        read_only_fields = ('id', 'created_at', 'updated_at')
+        fields = ['id', 'name', 'address', 'department', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
     
     def create(self, validated_data):
         max_id = Organization.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0

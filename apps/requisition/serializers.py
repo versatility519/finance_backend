@@ -16,7 +16,7 @@ from apps.inventory.serializers import OrderUnitSerializer
 class RequisitionDocSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequisitionDoc
-        fields = ['id', 'name', 'docs', 'requisition']
+        fields = ['id', 'name', 'docs', 'requisition', 'created_at']
     
     def create(self, validated_data):
         max_id = RequisitionDoc.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -33,7 +33,7 @@ class RequisitionItemSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = RequisitionItem
-        fields = ['id', 'name', 'description', 'measureUnit', 'manufacturer', 'manufacturer_code', 'supplier', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'reception_quantity', 'requisition']
+        fields = ['id', 'name', 'description', 'measureUnit', 'manufacturer', 'manufacturer_code', 'supplier', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'reception_quantity', 'requisition','created_at']
     
     def create(self, validated_data):
         max_id = RequisitionItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -73,7 +73,7 @@ class RequisitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Requisition
         fields = [
-            'id', 'requisition_number', 'date', 'docs', 'ship_to', 'bill_to', 'department', 'status', 'approved_by', 'created_by', 'total_net_amount', 'total_tax_amount', 'total_amount', 'items'
+            'id', 'requisition_number', 'date', 'docs', 'ship_to', 'bill_to', 'department', 'status', 'approved_by', 'created_by', 'total_net_amount', 'total_tax_amount', 'total_amount', 'items', 'created_at'
             ]
 
     def __init__(self, *args, **kwargs):

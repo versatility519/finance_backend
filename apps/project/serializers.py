@@ -5,7 +5,7 @@ from apps.project.models import Project
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ['id', 'project_name', 'start_date', 'end_date', 'budget', 'status']
+        fields = ['id', 'project_name', 'description', 'start_date', 'end_date', 'budget', 'status', 'created_at']
 
     def create(self, validated_data):
         max_id = Project.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0

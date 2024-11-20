@@ -42,5 +42,5 @@ urlpatterns = [
     path('api/', include('apps.purchaseOrder.urls')),
     
     path('api/', include('apps.tAccount.urls')),
+    path('api/', include('apps.shipping.urls')),
 ]
-     

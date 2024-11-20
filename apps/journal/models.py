@@ -9,6 +9,9 @@ class Journal(models.Model):
     e_date = models.DateField(null=True, blank=True)  
     number = models.PositiveIntegerField()
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     @property
     def total_credit(self):
         return sum(transaction.t_amount for transaction in self.transactions.filter(t_type='credit'))
@@ -32,6 +35,9 @@ class Transaction(models.Model):
     ])
     account = models.ForeignKey(LedgerAccount, related_name='transactions', on_delete=models.CASCADE)  
     journal = models.ForeignKey('Journal', related_name='transactions', on_delete=models.CASCADE, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.name
+        return self.t_name

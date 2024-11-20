@@ -8,8 +8,7 @@ from .models import (
     Transfert, TransfertItem,
     Issue, IssueItem,
     OrderUnit, IssueUnit,
-    Bin, Storeroom,Location,
-    # ReceptionDoc, ReservationDoc, IssueDoc,
+    Bin, Storeroom, Location
 )
 from .serializers import (
     InventoryItemSerializer,
@@ -38,7 +37,6 @@ class TransferListCreateView(generics.ListCreateAPIView):
 class TransferDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Transfert.objects.all()
     serializer_class = TransfertSerializer
-
 
 class IssueItemListCreateView(generics.ListCreateAPIView):
     queryset = IssueItem.objects.all()
@@ -95,8 +93,6 @@ class ReceptionListCreateView(generics.ListCreateAPIView):
 class ReceptionDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Reception.objects.all()
     serializer_class = ReceptionSerializer
-
-
 
 class StoreroomListCreateView(generics.ListCreateAPIView):
     queryset = Storeroom.objects.all()

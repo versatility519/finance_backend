@@ -23,6 +23,9 @@ class LedgerAccount(models.Model):
     ledger_name = models.CharField(max_length=20, choices=LEDGER_NAMES) 
     account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPES)
     type_status = models.CharField(max_length=20, choices=TYPES_STATUS)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.ledger_name  
@@ -44,6 +47,9 @@ class SubAccount(models.Model):
         on_delete=models.CASCADE
     )
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+        
     def __str__(self):
         if self.parent:
             return f"{self.parent} > {self.name}"

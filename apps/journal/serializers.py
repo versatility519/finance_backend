@@ -10,7 +10,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Transaction
-        fields = ['id', 't_name', 't_date', 't_amount', 't_description', 't_type', 'account', 'journal']
+        fields = ['id', 't_name', 't_date', 't_amount', 't_description', 't_type', 'account', 'journal', 'created_at']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -48,7 +48,7 @@ class JournalSerializer(serializers.ModelSerializer):
   
     class Meta:
         model = Journal
-        fields = ['id', 'name', 'status', 's_date', 'e_date', 'number', 'transactions', 'total_debit', 'total_credit']
+        fields = ['id', 'name', 'status', 's_date', 'e_date', 'number', 'transactions', 'total_debit', 'total_credit', 'created_at']
 
     def create(self, validated_data):
         max_id = Journal.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0

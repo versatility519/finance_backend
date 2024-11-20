@@ -1,11 +1,11 @@
 from django.db import models
 from rest_framework import serializers
-from .models import Client,Contact
+from .models import Client, Contact
 
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ['id', 'name', 'address', 'user', 'billing_address', 'shipping_address']
+        fields = ['id', 'name', 'address', 'user', 'billing_address', 'shipping_address', 'created_at']
 
     def create(self, validated_data):
         max_id = Client.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -19,7 +19,7 @@ class ContactSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contact
-        fields = ['id', 'first_name', 'last_name', 'phone', 'email', 'address', 'role', 'clients']
+        fields = ['id', 'first_name', 'last_name', 'phone', 'email', 'address', 'role', 'clients', 'created_at']
 
     def create(self, validated_data):
         max_id = Contact.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0

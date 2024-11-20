@@ -12,7 +12,7 @@ class PdocumentSerializer(serializers.ModelSerializer):
     production = serializers.PrimaryKeyRelatedField(queryset=Production.objects.all())
     class Meta:
         model = Pdocument
-        fields = ['id', 'doc_name', 'description', 'docfile', 'production']
+        fields = ['id', 'doc_name', 'description', 'doc_file', 'production', 'created_at']
 
     def create(self, validated_data):
         max_id = Pdocument.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -26,7 +26,7 @@ class ProductionItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductionItem
         fields = [
-            'id', 'name', 'description', 'quantity', 'manufacturer', 'manufacturer_code', 'measure_unit', 'approved', 'approved_quantity', 'status', 'production'
+            'id', 'name', 'description', 'quantity', 'manufacturer', 'manufacturer_code', 'measure_unit', 'approved', 'approved_quantity', 'status', 'production', 'created_at'
             ]
     
     def create(self, validated_data):
@@ -50,7 +50,7 @@ class ProductionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Production
         fields = [
-            'id', 'name', 'project', 'date', 'p_start_date', 'p_end_date', 'p_status', 'approved', 'approved_by', 'items', 'docs'
+            'id', 'p_name', 'project', 'date', 'p_start_date', 'p_end_date', 'p_status', 'approved', 'approved_by', 'items', 'docs'
         ]
     
     def __init__(self, *args, **kwargs):

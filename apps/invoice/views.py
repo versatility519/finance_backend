@@ -1,12 +1,14 @@
 from rest_framework import generics
 from apps.organization.models import Tax
-from .models import Invoice, InvoiceItem, InvoiceDoc, Terms
+from .models import Invoice, InvoiceItem, InvoiceDoc, Terms, InvoiceNotes
 from .serializers import (
     InvoiceSerializer,
     InvoiceItemSerializer,
     InvoiceDocSerializer,
     TermsSerializer,
+    InvoiceNoteSerializer
 )
+
 # InvoiceDoc Views
 class InvoiceDocListCreateView(generics.ListCreateAPIView):
     queryset = InvoiceDoc.objects.all()
@@ -34,7 +36,7 @@ class InvoiceDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
 
-# Invoice Views
+# InvoiceItem Views
 class InvoiceItemListCreateView(generics.ListCreateAPIView):
     queryset = InvoiceItem.objects.all()
     serializer_class = InvoiceItemSerializer
@@ -43,3 +45,11 @@ class InvoiceItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = InvoiceItem.objects.all()
     serializer_class = InvoiceItemSerializer
 
+# Invoice Notes
+class InvoiceNotesListCreateView(generics.ListCreateAPIView):
+    queryset = InvoiceNotes.objects.all()
+    serializer_class = InvoiceNoteSerializer
+
+class InvoiceNotesDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = InvoiceNotes.objects.all()
+    serializer_class = InvoiceNoteSerializer

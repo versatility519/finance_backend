@@ -11,14 +11,17 @@ from apps.users.models import CustomUser
 class PurchaseDocument(models.Model):
     doc_name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
-    docfile = models.FileField(upload_to='documents/purchase_docs')
+    docdoc_filefile = models.FileField(upload_to='documents/purchase_docs')
     purchase_order = models.ForeignKey('PurchaseOrder', related_name='documents', on_delete=models.CASCADE)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.name
 
 class PurchaseOrderItem(models.Model):
-    name = models.CharField(max_length=100)
+    item_name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
     manufacturer = models.CharField(max_length=100)
     manufacturer_code =  models.CharField(max_length=100)
@@ -41,11 +44,15 @@ class PurchaseOrderItem(models.Model):
     ])
     
     account = models.ForeignKey(LedgerAccount, on_delete=models.CASCADE)
-    # Reception_quantity = models.DecimalField()
+    reception_quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    received = models.BooleanField(default=False)
     purchaseOrder = models.ForeignKey('PurchaseOrder', related_name='items', on_delete=models.CASCADE)    
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
-        return self.name
+        return self.item_name
     
     def save(self, *args, **kwargs):
         if self.tax_group:
@@ -56,7 +63,7 @@ class PurchaseOrderItem(models.Model):
         super().save(*args, **kwargs)
     
 class PurchaseOrder(models.Model):
-    name = models.CharField(max_length=100)
+    po_name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
     date = models.DateField()
     ship_to = models.CharField(max_length=100)
@@ -77,3 +84,9 @@ class PurchaseOrder(models.Model):
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     approved = models.BooleanField(default=False)
     sent = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.po_name

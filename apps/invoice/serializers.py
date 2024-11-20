@@ -1,7 +1,7 @@
 from django.db import models
 from rest_framework import serializers
 
-from .models import Invoice, InvoiceItem, InvoiceDoc, Terms
+from .models import Invoice, InvoiceItem, InvoiceDoc, Terms, InvoiceNotes
 
 from apps.inventory.models import IssueUnit
 from apps.inventory.serializers import IssueUnitSerializer
@@ -12,13 +12,16 @@ from apps.account.serializers import LedgerAccountSerializer
 from apps.organization.models import Tax
 from apps.organization.serializers import TaxSerializer
 
+from apps.users.models import CustomUser
+from apps.users.serializers import UserSerializer
+
 from apps.client.models import Client, Contact
 from apps.client.serializers import ClientSerializer, ContactSerializer
 
 class InvoiceDocSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceDoc
-        fields = ['id', 'name', 'description', 'doc_file', 'invoice']
+        fields = ['id', 'name', 'description', 'doc_file', 'invoice', 'created_at']
 
     def create(self, validated_data):
         max_id = InvoiceDoc.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -30,7 +33,7 @@ class InvoiceDocSerializer(serializers.ModelSerializer):
 class TermsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Terms
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'created_at']
         
     def create(self, validated_data):
         max_id = Terms.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -48,7 +51,7 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = InvoiceItem
-        fields = ['id', 'name', 'description', 'account', 'measure_unit', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'invoice']
+        fields = ['id', 'name', 'description', 'account', 'measure_unit', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'invoice', 'created_at']
     
     def create(self, validated_data):
         max_id = InvoiceItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -87,7 +90,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
         model = Invoice
         fields = [
             'id', 'invoice_num', 'created_date', 'client', 'required_date', 
-            'status', 'ship_to', 'bill_to', 'terms', 'total_tax_amount', 'total_net_amount', 'total_amount', 'contact', 'turn_to_pdf', 'items', 'invoiceDocs'
+            'status', 'ship_to', 'bill_to', 'terms', 'total_tax_amount', 'total_net_amount', 'total_amount', 'contact', 'turn_to_pdf', 'client_approval', 'items', 'invoiceDocs'
         ]
 
     def __init__(self, *args, **kwargs):
@@ -115,4 +118,22 @@ class InvoiceSerializer(serializers.ModelSerializer):
         representation['terms'] = TermsSerializer(instance.terms).data
         representation['contact'] = ContactSerializer(instance.contact).data
         representation['client'] = ClientSerializer(instance.client).data
+        return representation
+    
+class InvoiceNoteSerializer(serializers.ModelSerializer):
+    invoice = serializers.PrimaryKeyRelatedField(queryset=Invoice.objects.all())
+    user = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+       
+    class Meta:
+        model = InvoiceNotes
+        fields = [
+            'id', 'user', 'invoice', 'created_at'
+        ]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['user'] = UserSerializer(instance.user.all(), many=True).data
+        
+        representation['invoice'] = InvoiceDocSerializer(instance.invoice.all(), many=True).data
+    
         return representation

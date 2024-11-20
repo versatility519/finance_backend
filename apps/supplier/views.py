@@ -41,7 +41,7 @@ class SupplierContactDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = SupplierContact.objects.all()
     serializer_class = SupplierContactSerializer
 
-class ShippingItemCreateView(generics.CreateAPIView):
+class ShippingItemCreateView(generics.ListCreateAPIView):
     queryset = ShippingItem.objects.all()
     serializer_class = ShippingItemSerializer
 
@@ -49,7 +49,7 @@ class ShippingItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = ShippingItem.objects.all()
     serializer_class = ShippingItemSerializer
 
-class ShipDocsCreateView(generics.CreateAPIView):
+class ShipDocsListCreateView(generics.ListCreateAPIView):
     queryset = ShipDocs.objects.all()
     serializer_class = ShipDocsSerializer
 
@@ -57,7 +57,7 @@ class ShipDocsDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = ShipDocs.objects.all()
     serializer_class = ShipDocsSerializer
 
-class ShippingCreateView(generics.CreateAPIView):
+class ShippingListCreateView(generics.ListCreateAPIView):
     queryset = Shipping.objects.all()
     serializer_class = ShippingSerializer
 
@@ -65,7 +65,7 @@ class ShippingDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Shipping.objects.all()
     serializer_class = ShippingSerializer
 
-class SupplierPOCreateView(generics.CreateAPIView):
+class SupplierPOListCreateView(generics.ListCreateAPIView):
     queryset = SupplierPO.objects.all()
     serializer_class = SupplierPOSerializer
 

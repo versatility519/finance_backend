@@ -5,6 +5,7 @@ from apps.inventory.models import IssueUnit
 from apps.client.models import Client, Contact
 from apps.account.models import LedgerAccount
 from apps.organization.models import Tax
+from apps.users.models import CustomUser
 
 class InvoiceDoc(models.Model):
     name = models.CharField(max_length=100)
@@ -12,11 +13,17 @@ class InvoiceDoc(models.Model):
     doc_file = models.FileField(upload_to='documents/invoices') 
     invoice = models.ForeignKey('Invoice', related_name='invoiceDocs', on_delete=models.CASCADE)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return str(self.name)
  
 class Terms(models.Model):
     name = models.CharField(max_length=20)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.name)
@@ -36,6 +43,9 @@ class InvoiceItem(models.Model):
     
     tax_group = models.ForeignKey(Tax, on_delete=models.CASCADE, null=True, blank=True, related_name='invoice_items')
     tax_amount = models.DecimalField(max_digits=10, decimal_places=3, editable=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return str(self.name)
@@ -57,7 +67,7 @@ class InvoiceItem(models.Model):
 
 class Invoice(models.Model):
     invoice_num = models.CharField(max_length=100)
-    created_date = models.DateField(auto_now=True)
+    created_date = models.DateField(auto_now_add=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
 
     required_date = models.DateField()
@@ -72,6 +82,9 @@ class Invoice(models.Model):
 
     contact = models.ForeignKey(Contact, on_delete=models.CASCADE, null=True, blank=True)
     turn_to_pdf = models.BooleanField(default=False)
+    client_approval = models.BooleanField(default=False)
+
+    updated_at = models.DateTimeField(auto_now=True)
     
     class Status(models.TextChoices):
         NEED_APPROVAL = 'need approval', 'Need approval'
@@ -95,3 +108,14 @@ class Invoice(models.Model):
         # self.total_amount = self.total_tax_amount + self.total_net_amount
 
         super().save(*args, **kwargs)
+        
+class InvoiceNotes(models.Model):
+    notes = models.CharField(max_length=200)
+    user = models.ForeignKey(CustomUser, related_name='invoice_user', on_delete=models.CASCADE)
+    invoice = models.ForeignKey('Invoice', related_name='notes', on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return str(self.notes)

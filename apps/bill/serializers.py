@@ -18,7 +18,7 @@ from apps.supplier.serializers import SupplierSerializer, SupplierContactSeriali
 class BillDocSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillDoc
-        fields = ['id', 'name', 'description', 'doc_file', 'bill']
+        fields = ['id', 'name', 'description', 'doc_file', 'bill', 'created_at']
 
     def create(self, validated_data):
         max_id = BillDoc.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -48,7 +48,7 @@ class BillItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BillItem
-        fields = ['id', 'name', 'description', 'account', 'measure_unit', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'bill']
+        fields = ['id', 'name', 'description', 'account', 'measure_unit', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'bill', 'created_at']
 
     def create(self, validated_data):
         max_id = BillItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -80,7 +80,7 @@ class BillSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Bill
-        fields = ['id', 'bill_num', 'date_created', 'supplier', 'items', 'required_date', 'status', 'ship_to', 'bill_to', 'total_tax_amount', 'total_net_amount', 'total_amount', 'terms', 'billDocs', 'contact']
+        fields = ['id', 'bill_num', 'date_created', 'supplier', 'items', 'required_date', 'status', 'ship_to', 'bill_to', 'total_tax_amount', 'total_net_amount', 'total_amount', 'terms', 'billDocs', 'contact', 'created_at']
         
     def create(self, validated_data):
         max_id = Bill.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0

@@ -6,14 +6,21 @@ from .models import Carrier, Supplier, SupplierItem, SupplierContact, ShippingIt
 class CarrierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Carrier
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'created_at']
+        
+    def create(self, validated_data):
+        max_id = Carrier.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
+        new_id = max_id + 1
+        validated_data['id'] = new_id
+        carrier = Carrier.objects.create(**validated_data)
+        return carrier  
 
 class SupplierContactSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
 
     class Meta:
         model = SupplierContact
-        fields = ['id', 'first_name', 'last_name', 'phone', 'email', 'address', 'role', 'full_name']
+        fields = ['id', 'first_name', 'last_name', 'phone', 'email', 'address', 'role', 'full_name', 'created_at']
 
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
@@ -23,7 +30,7 @@ class SupplierItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SupplierItem
-        fields = ['id', 'name', 'description', 'sku', 'manufacturer', 'manufacturer_code', 'quantity', 'measure_unit', 'growth', 'growth_fre', 'growth_per']
+        fields = ['id', 'item_name', 'description', 'sku', 'manufacturer', 'manufacturer_code', 'quantity', 'measure_unit', 'growth', 'growth_fre', 'growth_per', 'created_at']
 
     def create(self, validated_data):
         # Calculate the next ID based on the current maximum ID
@@ -48,7 +55,7 @@ class SupplierSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Supplier
-        fields = ['id', 'supplier_name', 'address', 'billing_address', 'shipping_address', 'user', 'account', 'inventory_items', 'supplier_items', 'supplier_contact']
+        fields = ['id', 'supplier_name', 'address', 'billing_address', 'shipping_address', 'user', 'account', 'inventory_items', 'supplier_items', 'supplier_contact', 'created_at']
 
     def create(self, validated_data):
         # Calculate the next ID based on the current maximum ID
@@ -64,7 +71,7 @@ class SupplierSerializer(serializers.ModelSerializer):
 class ShippingItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShippingItem
-        fields = ['id', 'shipping_name', 'description', 'manufacturer', 'manufacturer_code', 'item_code']
+        fields = ['id', 'shipping_name', 'description', 'manufacturer', 'manufacturer_code', 'item_code', 'created_at']
 
     def create(self, validated_data):
         
@@ -79,7 +86,7 @@ class ShippingItemSerializer(serializers.ModelSerializer):
 class ShipDocsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShipDocs
-        fields = ['id', 'name', 'docs']
+        fields = ['id', 'doc_name', 'doc_file', 'created_at']
 
 class ShippingSerializer(serializers.ModelSerializer):
     purchase_order = serializers.PrimaryKeyRelatedField(queryset=apps.get_model('purchaseOrder', 'PurchaseOrder').objects.all())
@@ -90,13 +97,14 @@ class ShippingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Shipping
-        fields = ['id', 'purchase_order', 'sent_by', 'sent_by_id', 'shipping_date', 'ETA', 'shipping_items', 'shipping_docs']
+        fields = ['id', 'purchase_order', 'sent_by', 'sent_by_id', 'shipping_date', 'ETA', 'shipping_items', 'shipping_docs', 'created_at']
 
     def create(self, validated_data):
         # Calculate the next ID based on the current maximum ID
         max_id = Shipping.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
         new_id = max_id + 1  # Increment the maximum ID by 1
-        # Handles recursive creation of sub-accounts
+        # Handles recursive cre
+        # ation of sub-accounts
         
         shipping = Shipping.objects.create(id=new_id, **validated_data)
         return shipping
@@ -113,7 +121,7 @@ class SupplierPOSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SupplierPO
-        fields = ['id', 'purchase_order', 'shipping', 'shipping_id', 'sup_approved']
+        fields = ['id', 'purchase_order', 'shipping', 'shipping_id', 'sup_approved', 'created_at']
 
     def create(self, validated_data):
         # Calculate the next ID based on the current maximum ID

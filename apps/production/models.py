@@ -7,9 +7,15 @@ from apps.users.models import CustomUser
 class Pdocument(models.Model):
     doc_name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
-    docfile = models.FileField(upload_to='documents/productions')
+    doc_file = models.FileField(upload_to='documents/productions')
     production = models.ForeignKey('Production', related_name='documents', on_delete=models.CASCADE)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.doc_name
+    
 class ProductionItem(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -26,6 +32,9 @@ class ProductionItem(models.Model):
     status = models.CharField(max_length=100)
    
     production = models.ForeignKey('Production', on_delete=models.CASCADE, related_name='items')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.name
@@ -36,8 +45,7 @@ class ProductionItem(models.Model):
         super().save(*args, **kwargs)
         
 class Production(models.Model):
-    
-    name = models.CharField(max_length=100)
+    p_name = models.CharField(max_length=100)
     date = models.DateField()
     
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='productions') 
@@ -56,3 +64,6 @@ class Production(models.Model):
     # created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='productions')
     approved = models.BooleanField(default=False)
     approved_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='productions')
+    
+    def __str__(self):
+        return self.p_name

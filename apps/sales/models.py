@@ -29,7 +29,10 @@ class SalesItem(models.Model):
     ])
     account = models.ForeignKey(LedgerAccount, on_delete=models.CASCADE)
     sales = models.ForeignKey('Sales', related_name='items', on_delete=models.CASCADE)
-    
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+   
     def __str__(self):
         return self.item_name
     
@@ -72,6 +75,9 @@ class Sales(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
     total_tax_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
     total_net_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.sales_number

@@ -13,7 +13,7 @@ from apps.users.serializers import UserSerializer
 class PurchaseDocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseDocument
-        fields = ['id', 'doc_name', 'description', 'docfile', 'purchase_order']
+        fields = ['id', 'doc_name', 'description', 'doc_file', 'purchase_order', 'created_at']
 
     def create(self, validated_data):
         max_id = PurchaseDocument.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -30,7 +30,7 @@ class PurchaseOrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PurchaseOrderItem
-        fields = ['id', 'name', 'description', 'manufacturer', 'manufacturer_code', 'measure_unit', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'account', 'purchaseOrder']
+        fields = ['id', 'name', 'description', 'manufacturer', 'manufacturer_code', 'measure_unit', 'quantity', 'price', 'net_amount', 'tax_amount', 'tax_group', 'account', 'purchaseOrder', 'created_at']
 
     def create(self, validated_data):
         max_id = PurchaseOrderItem.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -61,7 +61,7 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = PurchaseOrder
-        fields = ['id', 'name', 'description', 'date', 'ship_to', 'bill_to', 'department', 'created_by', 'approved', 'sent', 'items', 'documents']
+        fields = ['id', 'name', 'description', 'date', 'ship_to', 'bill_to', 'department', 'created_by', 'approved', 'sent', 'items', 'documents', 'created_at']
     
     def __init__(self, *args, **kwargs):
         request = kwargs.get('context', {}).get('request', None)

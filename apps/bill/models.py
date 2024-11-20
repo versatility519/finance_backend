@@ -13,12 +13,18 @@ class BillDoc(models.Model):
     doc_file = models.FileField(upload_to='documents/bills') 
     bill = models.ForeignKey('Bill', related_name='billDocs', on_delete=models.CASCADE)
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.name
  
 class Terms(models.Model):
     name = models.CharField(max_length=20)
-
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.name
     
@@ -36,6 +42,9 @@ class BillItem(models.Model):
     tax_amount = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
     
     bill = models.ForeignKey('Bill', related_name='items', on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.name
@@ -76,6 +85,9 @@ class Bill(models.Model):
     contact = models.ForeignKey('supplier.SupplierContact', on_delete=models.CASCADE, null=True, blank=True)    
     purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, null=True, blank=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return str(self.bill_num)
     

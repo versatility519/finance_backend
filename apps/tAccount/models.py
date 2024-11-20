@@ -3,7 +3,6 @@ from decimal import Decimal
 from apps.account.models import LedgerAccount
 from apps.journal.models import Transaction
 
-
 from django.db import models
 from django.core.exceptions import ValidationError
 
@@ -14,6 +13,9 @@ class TAccountTransaction(models.Model):
     debit_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     credit_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def save(self, *args, **kwargs):
         if not self.transaction:
             raise ValidationError("Transaction must be specified.")
@@ -44,6 +46,9 @@ class TAccounts(models.Model):
     total_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0.00) 
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return str(self.account)
     

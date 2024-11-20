@@ -27,7 +27,7 @@ class SalesItemSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'item_name', 'description', 'measure_unit', 'manufacturer', 
             'manufacturer_code', 'status', 'quantity', 'price', 'net_amount', 
-            'tax_amount', 'tax_group', 'account', 'sales'
+            'tax_amount', 'tax_group', 'account', 'sales', 'created_at'
         ]
 
     def create(self, validated_data):
@@ -55,7 +55,7 @@ class SalesSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'sales_number', 'created_date', 'ship_to', 'bill_to', 
             'department', 'status', 'approved', 'approved_by', 'created_by', 
-            'total_net_amount', 'total_tax_amount', 'total_amount', 'items'
+            'total_net_amount', 'total_tax_amount', 'total_amount', 'items' ,'created_at'
         ]
         
     #  if not request.user.groups.filter(name='Buyer').exists():
@@ -67,19 +67,19 @@ class SalesSerializer(serializers.ModelSerializer):
         items_data = validated_data.pop('items', [])
         
         # Get the user from context
-        user = self.context['request'].user
-        if user.is_anonymous:
-            raise ValidationError("User must be authenticated to create a Sales entry.")
+        # user = self.context['request'].user
+        # if user.is_anonymous:
+        #     raise ValidationError("User must be authenticated to create a Sales entry.")
         
-        if not user.groups.filter(name='Buyer').exists():
-            raise ValidationError("Only users with the Buyer role can create sales.")
+        # if not user.groups.filter(name='Buyer').exists():
+        #     raise ValidationError("Only users with the Buyer role can create sales.")
         
         max_id = Sales.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
         new_id = max_id + 1
         
         validated_data['id'] = new_id
         # Set the created_by field to the authenticated user
-        validated_data['created_by'] = user
+        # validated_data['created_by'] = user
         
         # Create Sales instance
         sales = Sales.objects.create(**validated_data)
@@ -111,7 +111,6 @@ class SalesSerializer(serializers.ModelSerializer):
         representation['approved_by'] = UserSerializer(instance.approved_by).data if instance.approved_by else None
         representation['created_by'] = UserSerializer(instance.created_by).data
         return representation
-
 
 
 

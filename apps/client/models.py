@@ -8,7 +8,10 @@ class Client(models.Model):
     billing_address = models.CharField(max_length=100)
     shipping_address = models.CharField(max_length=100)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.name   
       
@@ -20,6 +23,9 @@ class Contact(models.Model):
     address = models.CharField(max_length=100)
     role = models.CharField(max_length=100)
     clients = models.ForeignKey(Client, on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.first_name

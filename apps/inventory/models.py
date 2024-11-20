@@ -9,24 +9,37 @@ from apps.project.models import Project
 class OrderUnit(models.Model):
     name = models.CharField(max_length=100)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return self.name
 
 class IssueUnit(models.Model):
     name = models.CharField(max_length=100)
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return self.name
    
 class Category(models.Model):
     name = models.CharField(max_length=100)
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return self.name
     
 class SubCategory(models.Model):
     name = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.name
 
@@ -34,20 +47,30 @@ class Storeroom(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=100)
     bill_to = models.CharField(max_length=100)
-
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.name
     
 class Location(models.Model):
     name = models.CharField(max_length=100)
     storeroom = models.ForeignKey(Storeroom, on_delete=models.CASCADE)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.name 
 
 class Bin(models.Model):
     bin_name = models.CharField(max_length=100)
     bin_location = models.ForeignKey(Location, on_delete=models.CASCADE)
-   
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.bin_name
     
@@ -55,6 +78,9 @@ class ReceptionDoc(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
     doc_file = models.FileField(upload_to='documents/reception')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.name
@@ -68,7 +94,10 @@ class ReceptionItem(models.Model):
 
     item_quantity = models.FloatField()
     item_bin = models.ForeignKey(Bin, on_delete=models.CASCADE)
-
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.item_name
     
@@ -87,7 +116,7 @@ class Reception(models.Model):
     
     date_received = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-
+    
     def __str__(self):
         return self.notes    
     
@@ -99,6 +128,9 @@ class ReservationItem(models.Model):
     item_manufacturer_code = models.CharField(max_length=100)
     item_quantity = models.FloatField()
     measureUnit = models.ForeignKey('IssueUnit', on_delete=models.CASCADE)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.item_name
@@ -110,7 +142,7 @@ class Reservation(models.Model):
         ('completed', 'Completed'),
         ('cancel', 'Cancelled'),
     ]
-    date = models.DateField()
+    
     items = models.ForeignKey('ReservationItem',on_delete=models.CASCADE)
     reserved_date = models.DateTimeField(auto_now_add=True)
     reason = models.CharField(max_length=100)
@@ -127,6 +159,8 @@ class Reservation(models.Model):
     )
     
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.reason} - {self.reserved_date.strftime('%Y-%m-%d')}"
@@ -140,13 +174,15 @@ class IssueItem(models.Model):
     item_quantity = models.FloatField()
     measureUnit = models.ForeignKey('IssueUnit', on_delete=models.CASCADE)
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.item_name
     
 class Issue(models.Model):
     name = models.CharField(max_length=100)
     
-    created_date = models.DateField()
     items = models.ForeignKey('IssueItem',on_delete=models.CASCADE)
     reason = models.CharField(max_length=100)
 
@@ -158,12 +194,13 @@ class Issue(models.Model):
     notes= models.TextField()
     project = models.ForeignKey(Project, blank=True, null=True, on_delete=models.CASCADE)
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.reason
 
-
 class TransfertItem(models.Model):
-
     STATUS_CHOICES = [
         ('approve', 'Approve'),
         ('partially_approve', 'Partially Approve'),
@@ -180,7 +217,12 @@ class TransfertItem(models.Model):
     item_bin = models.ForeignKey(Bin, on_delete=models.CASCADE)
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
-
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.item_name
 
 class Transfert(models.Model):
     date = models.DateField()
@@ -193,6 +235,9 @@ class Transfert(models.Model):
         ('approve', 'Approve'),
         ('transfered', 'Transfered')
     ])
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.trans_number)
@@ -248,6 +293,9 @@ class InventoryItem(models.Model):
     )
 
     sub_category = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name

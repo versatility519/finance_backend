@@ -7,6 +7,9 @@ from apps.inventory.models import InventoryItem
 class Carrier(models.Model):
     name = models.CharField(max_length=50)
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return str(self.name)
     
@@ -22,11 +25,14 @@ class Supplier(models.Model):
         related_name='inventory_suppliers',
     )
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return str(self.supplier_name)
-    
+
 class SupplierItem(models.Model):
-    name = models.CharField(max_length=100)
+    item_name = models.CharField(max_length=100)
     description = models.TextField(max_length=200)
     sku = models.CharField(max_length=100)
     manufacturer = models.CharField(max_length=100)
@@ -45,8 +51,11 @@ class SupplierItem(models.Model):
     growth_per = models.FloatField()
     supplier = models.ForeignKey(Supplier, related_name='supplier_items', on_delete=models.CASCADE)
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
-        return self.name
+        return self.item_name
         
 class SupplierContact(models.Model):
     first_name = models.CharField(max_length=100)
@@ -56,6 +65,9 @@ class SupplierContact(models.Model):
     address = models.TextField(max_length=200)
     role = models.CharField(max_length=100)
     supplier = models.ForeignKey(Supplier, related_name='supplier_contact', on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -69,22 +81,31 @@ class ShippingItem(models.Model):
     
     shipping = models.ForeignKey('Shipping', on_delete=models.CASCADE)
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
         return self.shipping_name
 
 class ShipDocs(models.Model):
-    name = models.CharField(max_length=100)
-    docs = models.FileField(upload_to='documents/shipping')
+    doc_name = models.CharField(max_length=100)
+    doc_file = models.FileField(upload_to='documents/shipping')
     shipping = models.ForeignKey('Shipping', related_name='shipping_docs', on_delete=models.CASCADE)
-
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
-        return self.name
+        return self.doc_name
     
 class Shipping(models.Model):
     purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE)
     sent_by = models.ForeignKey(Carrier, on_delete=models.CASCADE)
-    shipping_date = models.DateField()
+    shipping_date = models.DateField(auto_now_add=True)
     ETA = models.PositiveIntegerField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"Shipping on {self.shipping_date}"
@@ -93,6 +114,9 @@ class SupplierPO(models.Model):
     purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE)
     shipping = models.ForeignKey(Shipping, on_delete=models.CASCADE)
     sup_approved = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"Supplier PO - Approved: {self.sup_approved}"

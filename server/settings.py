@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'apps.tAccount',    
     
     'apps.production',
+    'apps.shipping',
 ]
  
 REST_FRAMEWORK = {

@@ -13,11 +13,12 @@ class Project(models.Model):
         ('on hold', 'On Hold'),
         ('cancelled', 'Cancelled'),
     ], default='active')
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def clean(self):
-        if self.end_date < self.start_date:
+        if self.start_date and self.end_date and self.end_date < self.start_date:
             raise ValidationError('End date cannot be earlier than start date.')
 
     def __str__(self):

@@ -6,7 +6,7 @@ class SubAccountSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
     class Meta:
         model = SubAccount
-        fields = ['id', 'name', 'parent', 'children']
+        fields = ['id', 'name', 'parent', 'children', 'created_at']
 
     def get_children(self, instance):
         # Query the related `children` objects and use the same serializer recursively
@@ -32,7 +32,7 @@ class LedgerAccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LedgerAccount
-        fields = ['id', 'ledger_name', 'account_type', 'type_status', 'sub_accounts']
+        fields = ['id', 'ledger_name', 'account_type', 'type_status', 'sub_accounts', 'created_at']
 
     def create(self, validated_data):
         max_id = LedgerAccount.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0

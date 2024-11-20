@@ -12,7 +12,7 @@ class TAccountTransactionSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = TAccountTransaction
-        fields = ['id', 'date', 'transaction', 'transaction_account', 'debit_amount', 'credit_amount']
+        fields = ['id', 'date', 'transaction', 'transaction_account', 'debit_amount', 'credit_amount', 'created_at']
         
     def create(self, validated_data):
         max_id = TAccountTransaction.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
@@ -34,7 +34,7 @@ class TAccountsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = TAccounts
-        fields = ['id', 'account', 'transaction', 'total_debit', 'total_credit', 'balance']
+        fields = ['id', 'account', 'transaction', 'total_debit', 'total_credit', 'balance', 'created_at']
     
     def create(self, validated_data):
         max_id = TAccounts.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
