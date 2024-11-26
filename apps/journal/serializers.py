@@ -42,19 +42,24 @@ class TransactionSerializer(serializers.ModelSerializer):
         return instance
     
 class JournalSerializer(serializers.ModelSerializer):
-    transactions = TransactionSerializer(many=True)
+    transactions = TransactionSerializer(many=True, read_only=True)
+    # transactions = TransactionSerializer(read_only=True)
+    # transactions_id = serializers.PrimaryKeyRelatedField(
+    #     queryset=Transaction.objects.all(), 
+    #     write_only=True,
+    #     source='transactions'
+    # )
     total_debit = serializers.SerializerMethodField()
     total_credit = serializers.SerializerMethodField()
-  
+
     class Meta:
         model = Journal
         fields = ['id', 'name', 'status', 's_date', 'e_date', 'number', 'transactions', 'total_debit', 'total_credit', 'created_at']
 
     def create(self, validated_data):
         max_id = Journal.objects.aggregate(max_id=models.Max('id'))['max_id'] or 0
-        new_id = max_id + 1  
+        new_id = max_id + 1
         validated_data['id'] = new_id
-        
         journal = Journal.objects.create(**validated_data)
         return journal
 

@@ -43,4 +43,7 @@ urlpatterns = [
     
     path('api/', include('apps.tAccount.urls')),
     path('api/', include('apps.shipping.urls')),
+    
+    path('api/', include('apps.trialBalance.urls')),
+    path('api/', include('apps.fiStatement.urls')),
 ]

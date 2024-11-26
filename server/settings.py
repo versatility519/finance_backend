@@ -63,6 +63,9 @@ INSTALLED_APPS = [
     
     'apps.production',
     'apps.shipping',
+    
+    'apps.trialBalance',
+    'apps.fiStatement',
 ]
  
 REST_FRAMEWORK = {
